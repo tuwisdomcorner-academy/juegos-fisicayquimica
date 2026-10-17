@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wisdom Corner Academy - Inorganic Chemistry</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f0fdf4; color: #1e293b; }
+        .wc-blue { color: #2563eb; }
+        .wc-gold { color: #d97706; }
+        .bg-wc-blue { background-color: #2563eb; }
+        .bg-wc-gold { background-color: #d97706; }
+        .input-box { border: 2px solid #cbd5e1; border-radius: 0.5rem; padding: 0.5rem; width: 100%; transition: border-color 0.3s; }
+        .input-box:focus { border-color: #2563eb; outline: none; }
+        .correct { border-color: #16a34a !important; background-color: #dcfce3; }
+        .incorrect { border-color: #dc2626 !important; background-color: #fee2e2; }
+        .sub-btn { background-color: #dbeafe; color: #1e3a8a; border-radius: 0.375rem; padding: 0.25rem 0.5rem; font-weight: bold; transition: background-color 0.2s; cursor: pointer; }
+        .sub-btn:hover { background-color: #bfdbfe; }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+
+    <!-- Header -->
+    <header class="max-w-4xl mx-auto text-center mb-8">
+        <h1 class="text-3xl md:text-5xl font-bold wc-blue mb-2">Wisdom Corner Academy</h1>
+        <h2 class="text-xl md:text-2xl font-semibold wc-gold">Inorganic Chemistry: Oxides & Halides</h2>
+    </header>
+
+    <!-- Pantalla de Login -->
+    <main id="screen-login" class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg text-center">
+        <h3 class="text-2xl font-bold mb-4">Welcome to the Challenge</h3>
+        <p class="mb-6 text-gray-600">You will face 40 random questions about Oxides, Oxygen Halides, and Hydrogen Halides. Good luck!</p>
+        <input type="text" id="studentName" placeholder="Enter your name" class="input-box mb-4 text-center text-lg">
+        <button onclick="startQuiz()" class="w-full bg-wc-blue text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition">Start Practice</button>
+        
+        <div class="mt-8 border-t pt-6">
+            <h4 class="text-xl font-bold wc-gold mb-4">🏆 Top 10 Leaderboard</h4>
+            <ul id="leaderboard-list" class="text-left space-y-2">
+                <!-- Leaderboard cargado por JS -->
+            </ul>
+        </div>
+    </main>
+
+    <!-- Pantalla del Quiz -->
+    <main id="screen-quiz" class="max-w-4xl mx-auto hidden">
+        <div class="bg-white p-6 rounded-xl shadow-lg mb-6 flex justify-between items-center sticky top-0 z-40">
+            <span id="display-name" class="font-bold text-lg wc-blue"></span>
+            <span class="font-bold bg-wc-gold text-white px-4 py-1 rounded-full text-sm md:text-base">40 Exercises</span>
+        </div>
+        
+        <form id="quiz-form" onsubmit="submitQuiz(event)" class="space-y-6">
+            <div id="questions-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
+            
+            <div class="text-center pt-6 pb-20">
+                <button type="submit" class="bg-wc-blue text-white font-bold py-4 px-12 rounded-xl text-xl hover:bg-blue-700 transition shadow-lg">Submit Answers</button>
+            </div>
+        </form>
+    </main>
+
+    <!-- Pantalla de Resultados -->
+    <main id="screen-results" class="max-w-4xl mx-auto hidden">
+        <div class="bg-white p-8 rounded-xl shadow-lg text-center mb-6">
+            <h3 class="text-3xl font-bold wc-blue mb-4">Results</h3>
+            <div class="flex justify-center gap-8 mb-6">
+                <div class="text-center"><span class="block text-4xl font-bold text-green-600" id="res-correct">0</span><span class="text-gray-500 uppercase text-sm">Correct</span></div>
+                <div class="text-center"><span class="block text-4xl font-bold text-red-600" id="res-incorrect">0</span><span class="text-gray-500 uppercase text-sm">Incorrect</span></div>
+            </div>
+            <button onclick="location.reload()" class="bg-wc-gold text-white font-bold py-2 px-6 rounded-xl hover:bg-orange-600 transition">Try Again</button>
+        </div>
+        <div id="review-container" class="space-y-4"></div>
+    </main>
+
+    <script>
+        // CONFIGURACIÓN DE BASE DE DATOS (Google Apps Script)
+        const GAS_WEB_APP_URL = ""; 
+
+        // BANCO DE PREGUNTAS
+        const rawBank = [
+            { formula: "Fe₂O₃", stock: "iron(III) oxide", systematic: "diiron trioxide", type: "oxide" },
+            { formula: "FeO", stock: "iron(II) oxide", systematic: "iron monoxide", type: "oxide" },
+            { formula: "Na₂O", stock: "sodium oxide", systematic: "disodium oxide", type: "oxide" },
+            { formula: "CO₂", stock: "carbon(IV) oxide", systematic: "carbon dioxide", type: "oxide" },
+            { formula: "CO", stock: "carbon(II) oxide", systematic: "carbon monoxide", type: "oxide" },
+            { formula: "SO₃", stock: "sulfur(VI) oxide", systematic: "sulfur trioxide", type: "oxide" },
+            { formula: "SO₂", stock: "sulfur(IV) oxide", systematic: "sulfur dioxide", type: "oxide" },
+            { formula: "Al₂O₃", stock: "aluminum oxide", systematic: "dialuminum trioxide", type: "oxide" },
+            { formula: "CuO", stock: "copper(II) oxide", systematic: "copper monoxide", type: "oxide" },
+            { formula: "Cu₂O", stock: "copper(I) oxide", systematic: "dicopper monoxide", type: "oxide" },
+            { formula: "PbO₂", stock: "lead(IV) oxide", systematic: "lead dioxide", type: "oxide" },
+            { formula: "N₂O₅", stock: "nitrogen(V) oxide", systematic: "dinitrogen pentaoxide", type: "oxide" },
+            { formula: "OCl₂", systematic: "oxygen dichloride", type: "halide" },
+            { formula: "O₃Cl₂", systematic: "trioxygen dichloride", type: "halide" },
+            { formula: "O₅Cl₂", systematic: "pentaoxygen dichloride", type: "halide" },
+            { formula: "OBr₂", systematic: "oxygen dibromide", type: "halide" },
+            { formula: "OF₂", systematic: "oxygen difluoride", type: "halide" },
+            { formula: "O₇I₂", systematic: "heptaoxygen diiodide", type: "halide" },
+            { formula: "HCl", systematic: "hydrogen chloride", type: "halide" },
+            { formula: "HF", systematic: "hydrogen fluoride", type: "halide" },
+            { formula: "HBr", systematic: "hydrogen bromide", type: "halide" },
+            { formula: "HI", systematic: "hydrogen iodide", type: "halide" },
+            { formula: "H₂S", systematic: "hydrogen sulfide", type: "halide" },
+            { formula: "H₂Se", systematic: "hydrogen selenide", type: "halide" }
+        ];
+
+        let questionBank = [];
+        rawBank.forEach(item => {
+            if (item.type === "oxide") {
+                questionBank.push({
+                    prompt: `Name the formula: <strong>${item.formula}</strong> (Oxide)`,
+                    type: "formulaToNameOxide",
+                    ansStock: item.stock,
+                    ansSystematic: item.systematic
+                });
+                questionBank.push({
+                    prompt: `Write the formula for: <strong>${item.stock}</strong>`,
+                    type: "nameToFormula",
+                    answer: item.formula
+                });
+                questionBank.push({
+                    prompt: `Write the formula for: <strong>${item.systematic}</strong>`,
+                    type: "nameToFormula",
+                    answer: item.formula
+                });
+            } else {
+                questionBank.push({
+                    prompt: `Name the formula: <strong>${item.formula}</strong>`,
+                    type: "formulaToNameHalide",
+                    answer: item.systematic
+                });
+                questionBank.push({
+                    prompt: `Write the formula for: <strong>${item.systematic}</strong>`,
+                    type: "nameToFormula",
+                    answer: item.formula
+                });
+            }
+        });
+
+        let currentQuestions = [];
+
+        window.onload = loadLeaderboard;
+
+        function startQuiz() {
+            const name = document.getElementById('studentName').value.trim();
+            if (!name) return alert("Please enter your name.");
+            
+            document.getElementById('display-name').innerText = "Student: " + name;
+            document.getElementById('screen-login').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+            
+            const shuffled = questionBank.sort(() => 0.5 - Math.random());
+            currentQuestions = shuffled.slice(0, 40);
+            
+            renderQuestions();
+        }
+
+        // Inserta el subíndice en el input correspondiente
+        function insertInlineSubscript(inputId, sub) {
+            const activeInput = document.getElementById(inputId);
+            if (activeInput) {
+                const start = activeInput.selectionStart || activeInput.value.length;
+                const end = activeInput.selectionEnd || activeInput.value.length;
+                const text = activeInput.value;
+                activeInput.value = text.substring(0, start) + sub + text.substring(end);
+                activeInput.focus();
+                activeInput.setSelectionRange(start + 1, start + 1);
+            }
+        }
+
+        // Genera los botones de subíndices
+        function getSubscriptButtonsHTML(inputId) {
+            const subs = ['₂', '₃', '₄', '₅', '₆', '₇'];
+            let html = '<div class="flex flex-wrap gap-1 ml-2 items-center justify-center min-w-[70px]">';
+            subs.forEach(s => {
+                html += `<button type="button" onclick="insertInlineSubscript('${inputId}', '${s}')" class="sub-btn text-xs sm:text-sm" tabindex="-1">${s}</button>`;
+            });
+            html += '</div>';
+            return html;
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = "";
+            
+            currentQuestions.forEach((q, index) => {
+                let html = `<div class="bg-white p-4 rounded-lg shadow border border-gray-100 flex flex-col justify-between" id="q-card-${index}">
+                    <p class="mb-3 text-gray-700 font-medium">${index + 1}. ${q.prompt}</p>
+                    <div class="flex flex-col gap-2">`;
+                
+                if (q.type === "formulaToNameOxide") {
+                    html += `
+                        <input type="text" id="ans-${index}-stock" placeholder="Stock nomenclature" class="input-box" autocomplete="off">
+                        <input type="text" id="ans-${index}-sys" placeholder="Systematic nomenclature" class="input-box" autocomplete="off">
+                    `;
+                } else if (q.type === "nameToFormula") {
+                    html += `
+                        <div class="flex items-stretch w-full">
+                            <input type="text" id="ans-${index}" placeholder="Your answer" class="input-box flex-1" autocomplete="off">
+                            ${getSubscriptButtonsHTML(`ans-${index}`)}
+                        </div>
+                    `;
+                } else {
+                    html += `<input type="text" id="ans-${index}" placeholder="Your answer" class="input-box" autocomplete="off">`;
+                }
+                
+                html += `</div></div>`;
+                container.innerHTML += html;
+            });
+        }
+
+        function normalize(str) {
+            if(!str) return "";
+            let s = str.toLowerCase().trim().replace(/\s+/g, " ");
+            const subMap = {'0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉'};
+            let normalizedFormula = s.replace(/[0-9]/g, m => subMap[m]); 
+            return { raw: s, form: normalizedFormula };
+        }
+
+        function submitQuiz(e) {
+            e.preventDefault();
+            
+            let correctCount = 0;
+            let reviewHTML = "";
+
+            currentQuestions.forEach((q, i) => {
+                let isCorrect = false;
+                let userAnsText = "";
+                let correctAnsText = "";
+
+                if (q.type === "formulaToNameOxide") {
+                    let uStock = document.getElementById(`ans-${i}-stock`).value;
+                    let uSys = document.getElementById(`ans-${i}-sys`).value;
+                    userAnsText = `${uStock} | ${uSys}`;
+                    correctAnsText = `${q.ansStock} | ${q.ansSystematic}`;
+                    
+                    let nStock = normalize(uStock).raw;
+                    let nSys = normalize(uSys).raw;
+                    let cStock = normalize(q.ansStock).raw;
+                    let cSys = normalize(q.ansSystematic).raw;
+                    
+                    if (nStock === cStock && nSys === cSys) isCorrect = true;
+                } else {
+                    let uAns = document.getElementById(`ans-${i}`).value;
+                    userAnsText = uAns;
+                    correctAnsText = q.answer;
+                    
+                    let nAns = normalize(uAns);
+                    let cAns = normalize(q.answer);
+                    
+                    if (nAns.raw === cAns.raw || nAns.form === cAns.raw) isCorrect = true;
+                }
+
+                if (isCorrect) correctCount++;
+                else {
+                    reviewHTML += `
+                        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg">
+                            <p class="font-medium mb-1 text-gray-800">${i + 1}. ${q.prompt}</p>
+                            <p class="text-sm text-red-600 line-through">Your answer: ${userAnsText || "<i>empty</i>"}</p>
+                            <p class="text-sm text-green-700 font-bold mt-1">Correct answer: ${correctAnsText}</p>
+                        </div>
+                    `;
+                }
+            });
+
+            const incorrectCount = currentQuestions.length - correctCount;
+            document.getElementById('res-correct').innerText = correctCount;
+            document.getElementById('res-incorrect').innerText = incorrectCount;
+            
+            if(incorrectCount === 0) {
+                reviewHTML = `<div class="p-4 bg-green-100 text-green-800 rounded-lg text-center font-bold">Perfect score! Brilliant work!</div>`;
+            }
+            
+            document.getElementById('review-container').innerHTML = reviewHTML;
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-results').classList.remove('hidden');
+
+            saveScore(document.getElementById('studentName').value.trim(), correctCount);
+            window.scrollTo(0,0);
+        }
+
+        async function saveScore(name, score) {
+            const data = { name: name, score: score, date: new Date().toISOString() };
+            
+            if (GAS_WEB_APP_URL) {
+                try {
+                    await fetch(GAS_WEB_APP_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                } catch(e) { console.error("Error saving to server", e); }
+            } else {
+                let board = JSON.parse(localStorage.getItem('wc-inorganic-leaderboard') || '[]');
+                board.push(data);
+                board.sort((a, b) => b.score - a.score);
+                board = board.slice(0, 10);
+                localStorage.setItem('wc-inorganic-leaderboard', JSON.stringify(board));
+            }
+        }
+
+        async function loadLeaderboard() {
+            let board = [];
+            if (GAS_WEB_APP_URL) {
+                try {
+                    const response = await fetch(GAS_WEB_APP_URL);
+                    board = await response.json();
+                } catch(e) { console.error("Error loading from server", e); }
+            } else {
+                board = JSON.parse(localStorage.getItem('wc-inorganic-leaderboard') || '[]');
+            }
+
+            const list = document.getElementById('leaderboard-list');
+            list.innerHTML = "";
+            if (board.length === 0) {
+                list.innerHTML = "<li class='text-gray-500 italic'>No scores yet. Be the first!</li>";
+                return;
+            }
+            board.slice(0,10).forEach((entry, i) => {
+                let badge = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `${i+1}.`;
+                list.innerHTML += `
+                    <li class="flex justify-between items-center bg-gray-50 p-2 rounded border border-gray-100">
+                        <span class="font-semibold text-gray-700">${badge} ${entry.name}</span>
+                        <span class="bg-wc-blue text-white px-3 py-1 rounded-full text-sm">${entry.score}/40</span>
+                    </li>`;
+            });
+        }
+    </script>
+</body>
+</html>
