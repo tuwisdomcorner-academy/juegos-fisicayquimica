@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicios Avanzados Gases - Wisdom Corner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f0fdf4; color: #1e293b; }
+        .wc-blue { color: #2563eb; }
+        .wc-gold { color: #d97706; }
+        .bg-wc-blue { background-color: #2563eb; }
+        .bg-wc-gold { background-color: #d97706; }
+        .input-box { 
+            border: 2px solid #cbd5e1; border-radius: 0.5rem; padding: 0.5rem; 
+            width: 100%; transition: border-color 0.3s; text-align: center; font-size: 1.1rem;
+        }
+        .input-box:focus { border-color: #2563eb; outline: none; }
+        .correct { border-color: #16a34a !important; background-color: #dcfce3; color: #166534; font-weight: bold;}
+        .incorrect { border-color: #dc2626 !important; background-color: #fee2e2; color: #991b1b; text-decoration: line-through;}
+        .feedback { display: none; font-size: 0.9rem; margin-top: 0.5rem; font-weight: 600; }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+
+    <!-- Cabecera -->
+    <header class="max-w-4xl mx-auto text-center mb-8">
+        <img src="cabecera_google_forms_wisdom_corner.png" alt="Wisdom Corner Academy Logo" class="mx-auto mb-4 w-64 md:w-96 rounded-xl shadow-sm">
+        <h1 class="text-3xl md:text-5xl font-bold wc-blue mb-2">Leyes de los Gases</h1>
+        <h2 class="text-xl md:text-2xl font-semibold wc-gold">Nivel Avanzado</h2>
+    </header>
+
+    <!-- Pantalla de Inicio -->
+    <main id="screen-login" class="max-w-xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+        <div class="flex flex-col md:flex-row items-center gap-6 mb-6 bg-blue-50 p-6 rounded-xl border border-blue-100">
+            <img src="Gemini_Generated_Image_txvivztxvivztxvi.png" alt="Profesor Sori" class="w-32 h-32 rounded-full object-cover shadow-md border-4 border-white">
+            <div>
+                <h3 class="font-bold text-lg wc-blue mb-2">Consejo del Profesor:</h3>
+                <p class="text-sm text-gray-700">Recuerda estar muy atento a las unidades. Pasa siempre la temperatura a Kelvin (+273) y asegúrate de que presión y volumen estén en la misma unidad a ambos lados de la ecuación.</p>
+            </div>
+        </div>
+        
+        <input type="text" id="studentName" placeholder="Escribe tu nombre para empezar" class="input-box mb-4 text-lg">
+        <button onclick="startQuiz()" class="w-full bg-wc-blue text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition shadow-md">Comenzar el Reto</button>
+    </main>
+
+    <!-- Pantalla de Ejercicios -->
+    <main id="screen-quiz" class="max-w-4xl mx-auto hidden">
+        <div class="bg-white p-4 rounded-xl shadow-md mb-6 flex justify-between items-center sticky top-0 z-40 border-b-4 border-blue-600">
+            <span id="display-name" class="font-bold text-lg wc-blue"></span>
+            <span class="font-bold bg-wc-gold text-white px-4 py-1 rounded-full text-sm">12 Problemas</span>
+        </div>
+        
+        <form id="quiz-form" onsubmit="submitQuiz(event)" class="space-y-6">
+            <div id="questions-container" class="space-y-6"></div>
+            
+            <div class="text-center pt-8 pb-20">
+                <button type="submit" class="bg-wc-gold text-white font-bold py-4 px-12 rounded-xl text-xl hover:bg-orange-600 transition shadow-lg w-full md:w-auto">Entregar para Corregir</button>
+            </div>
+        </form>
+    </main>
+
+    <!-- Pantalla de Resultados y Despedida -->
+    <main id="screen-results" class="max-w-4xl mx-auto hidden pb-20">
+        <div class="bg-white p-8 rounded-xl shadow-lg text-center mb-6">
+            <h3 class="text-3xl font-bold wc-blue mb-4">Resultados de <span id="result-name"></span></h3>
+            <div class="flex justify-center gap-8 mb-6">
+                <div class="text-center"><span class="block text-5xl font-bold text-green-600" id="res-correct">0</span><span class="text-gray-500 uppercase text-sm font-bold">Aciertos</span></div>
+                <div class="text-center"><span class="block text-5xl font-bold text-red-600" id="res-incorrect">0</span><span class="text-gray-500 uppercase text-sm font-bold">Errores</span></div>
+            </div>
+            <p class="text-gray-600 mb-6 font-medium">Revisa tus respuestas desplazándote hacia abajo. Las correctas están en verde, y las incorrectas te muestran la solución esperada.</p>
+            <button onclick="location.reload()" class="bg-wc-blue text-white font-bold py-2 px-8 rounded-xl hover:bg-blue-700 transition">Volver a Intentarlo</button>
+        </div>
+
+        <div class="flex flex-col md:flex-row items-center gap-6 mt-12 bg-orange-50 p-6 rounded-xl border border-orange-100 shadow-md">
+            <img src="Gemini_Generated_Image_yxc6z7yxc6z7yxc6.jpg" alt="Profesor Animando" class="w-32 h-32 rounded-full object-cover shadow-md border-4 border-white">
+            <div>
+                <h3 class="font-bold text-xl text-orange-600 mb-2">¡Gran esfuerzo!</h3>
+                <p class="text-gray-700">Las leyes de los gases requieren mucha atención al detalle y a las mates. No importa si has fallado alguna, lo importante es entender el porqué. ¡Sigue practicando!</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // BANCO DE PREGUNTAS (Con lógica de corrección tolerante al redondeo)
+        const quizData = [
+            {
+                id: 1, type: 'numeric', unit: 'atm',
+                title: "Ley de Boyle (Atención a las unidades)",
+                text: "Una jeringuilla sellada contiene 50 mL de gas a 760 mmHg. Si tiramos del émbolo hasta un volumen de 150 mL sin cambiar la temperatura, ¿cuál es la nueva presión en atmósferas? (Recordatorio: 1 atm = 760 mmHg).",
+                answer: 0.33, tolerance: 0.02
+            },
+            {
+                id: 2, type: 'numeric', unit: 'mL',
+                title: "Ley de Charles (Frío extremo)",
+                text: "Tienes un globo de 2 L a 22 ºC en tu habitación. Lo metes en un tanque de nitrógeno líquido (-196 ºC). Asumiendo que la presión de la habitación no cambia, ¿cuál será el nuevo volumen del globo en mililitros?",
+                answer: 522, tolerance: 5
+            },
+            {
+                id: 3, type: 'numeric', unit: 'ºC',
+                title: "Ley de Gay-Lussac (Riesgo de explosión)",
+                text: "Una lata de laca vacía tiene una presión interna de 1 atm a 25 ºC. El fabricante advierte que la lata explotará si la presión supera las 3 atm. Si se tira al fuego accidentalmente, ¿a qué temperatura (en ºC) explotará la lata?",
+                answer: 621, tolerance: 5
+            },
+            {
+                id: 4, type: 'numeric', unit: 'L',
+                title: "Ley Combinada (El globo meteorológico)",
+                text: "Un globo meteorológico se suelta a nivel del mar (1 atm, 25 ºC) con un volumen de 50 L. Al subir a la estratosfera, la presión baja a 0.2 atm y la temperatura desciende drásticamente a -50 ºC. ¿Qué volumen tendrá el globo en esas condiciones?",
+                answer: 187, tolerance: 2
+            },
+            {
+                id: 5, type: 'numeric', unit: 'moles',
+                title: "Gases Ideales (Calculando Moles)",
+                text: "¿Cuántos moles de gas oxígeno (O₂) hay en un recipiente de 10 L a una presión de 3 atm y una temperatura de 27 ºC? (Dato: R = 0.082 atm·L/mol·K).",
+                answer: 1.22, tolerance: 0.05
+            },
+            {
+                id: 6, type: 'numeric', unit: 'gramos',
+                title: "Gases Ideales (De Moles a Gramos)",
+                text: "Sabiendo que el resultado del ejercicio anterior te ha dado los moles de oxígeno, y que la masa molar del O₂ es 32 g/mol. ¿Cuántos gramos exactos de oxígeno tienes atrapados en el recipiente?",
+                answer: 39.04, tolerance: 0.5
+            },
+            {
+                id: 7, type: 'scientific', unit: 'moléculas',
+                title: "Gases Ideales con Moléculas (PV=NkT)",
+                text: "En una habitación hermética muy pequeña de 10 m³ a 20 ºC y 101325 Pa de presión. ¿Cuántas moléculas exactas de aire hay rebotando contra las paredes? (Dato: k = 1.38 x 10⁻²³ J/K).",
+                ansBase: 2.5, ansExp: 26, toleranceBase: 0.2
+            },
+            {
+                id: 8, type: 'numeric', unit: 'ºC',
+                title: "Densidad y Gases Ideales",
+                text: "Un extintor de CO₂ de 5 Litros contiene 440 gramos de dióxido de carbono (Masa molar = 44 g/mol). Si el manómetro marca una presión de 15 atm, ¿a qué temperatura en grados centígrados está el gas dentro del extintor?",
+                answer: -181.5, tolerance: 2
+            },
+            {
+                id: 9, type: 'numeric', unit: 'L',
+                title: "Ley de Boyle (Buceo Profundo)",
+                text: "Un tanque de buceo de 12 L contiene aire altamente comprimido a 200 atm. Si por un accidente la válvula se rompe en la superficie del mar (presión de 1 atm) y la temperatura se mantiene constante, ¿qué volumen en litros ocuparía todo ese aire al liberarse?",
+                answer: 2400, tolerance: 5
+            },
+            {
+                id: 10, type: 'numeric', unit: 'mL',
+                title: "Ley de Charles (El horno)",
+                text: "Un panadero está haciendo un experimento. Introduce un recipiente flexible con 500 mL de aire a temperatura ambiente (20 ºC) dentro del horno encendido a 200 ºC. Si la presión atmosférica se mantiene constante, ¿qué volumen alcanzará el recipiente antes de sacarlo?",
+                answer: 807, tolerance: 5
+            },
+            {
+                id: 11, type: 'numeric', unit: 'atm',
+                title: "Gay-Lussac (El viaje en coche)",
+                text: "Un neumático de coche se infla en el garaje a 2.5 atm y a una temperatura de 15 ºC. Tras un largo viaje por carretera en pleno mes de agosto, el asfalto calienta el neumático hasta los 65 ºC. Si asumimos que la goma es rígida y el volumen apenas cambia, ¿cuál es la nueva presión que marca el neumático?",
+                answer: 2.93, tolerance: 0.05
+            },
+            {
+                id: 12, type: 'select', unit: '',
+                title: "Combinado de Lógica (El reto de la Academia)",
+                text: "Tienes dos recipientes de cristal idénticos (exactamente el mismo volumen). El recipiente A contiene un gas a 300 K y 2 atm. El recipiente B contiene el mismo gas a 600 K y 1 atm. ¿En cuál de los dos hay más moléculas?",
+                options: ["", "Recipiente A", "Recipiente B", "Hay exactamente las mismas"],
+                answer: "Recipiente A"
+            }
+        ];
+
+        function startQuiz() {
+            const name = document.getElementById('studentName').value.trim();
+            if (!name) return alert("Por favor, escribe tu nombre.");
+            
+            document.getElementById('display-name').innerText = "Estudiante: " + name;
+            document.getElementById('result-name').innerText = name;
+            document.getElementById('screen-login').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+            
+            renderQuestions();
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = "";
+            
+            quizData.forEach((q, index) => {
+                let html = `
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 relative overflow-hidden" id="card-${q.id}">
+                    <div class="absolute top-0 left-0 w-2 h-full bg-wc-blue"></div>
+                    <h4 class="font-bold text-gray-800 mb-2 ml-4">Ejercicio ${index + 1}: ${q.title}</h4>
+                    <p class="text-gray-700 mb-4 ml-4">${q.text}</p>
+                    <div class="ml-4 flex items-center gap-3">`;
+                
+                if (q.type === 'numeric') {
+                    html += `<input type="number" step="any" id="ans-${q.id}" class="input-box md:w-1/3" placeholder="Tu respuesta">
+                             <span class="font-bold text-gray-500">${q.unit}</span>`;
+                } else if (q.type === 'select') {
+                    html += `<select id="ans-${q.id}" class="input-box md:w-1/2 cursor-pointer">`;
+                    q.options.forEach(opt => html += `<option value="${opt}">${opt === "" ? "Elige una opción..." : opt}</option>`);
+                    html += `</select>`;
+                } else if (q.type === 'scientific') {
+                    html += `<input type="number" step="any" id="ans-${q.id}-base" class="input-box w-24" placeholder="Base">
+                             <span class="font-bold text-gray-500"> x 10^ </span>
+                             <input type="number" id="ans-${q.id}-exp" class="input-box w-20" placeholder="Exp">
+                             <span class="font-bold text-gray-500">${q.unit}</span>`;
+                }
+                
+                html += `</div>
+                         <div id="feedback-${q.id}" class="feedback ml-4"></div>
+                </div>`;
+                container.innerHTML += html;
+            });
+        }
+
+        function submitQuiz(e) {
+            e.preventDefault();
+            
+            let correctCount = 0;
+            
+            quizData.forEach(q => {
+                let isCorrect = false;
+                let userInputs = [];
+                let correctText = "";
+                
+                if (q.type === 'numeric') {
+                    const input = document.getElementById(`ans-${q.id}`);
+                    const userVal = parseFloat(input.value);
+                    userInputs.push(input);
+                    
+                    if (!isNaN(userVal) && Math.abs(userVal - q.answer) <= q.tolerance) {
+                        isCorrect = true;
+                    }
+                    correctText = `Solución esperada: ~${q.answer} ${q.unit}`;
+                } 
+                else if (q.type === 'select') {
+                    const input = document.getElementById(`ans-${q.id}`);
+                    userInputs.push(input);
+                    
+                    if (input.value === q.answer) {
+                        isCorrect = true;
+                    }
+                    correctText = `Solución esperada: ${q.answer}`;
+                } 
+                else if (q.type === 'scientific') {
+                    const inpBase = document.getElementById(`ans-${q.id}-base`);
+                    const inpExp = document.getElementById(`ans-${q.id}-exp`);
+                    userInputs.push(inpBase, inpExp);
+                    
+                    const uBase = parseFloat(inpBase.value);
+                    const uExp = parseInt(inpExp.value);
+                    
+                    if (!isNaN(uBase) && !isNaN(uExp) && Math.abs(uBase - q.ansBase) <= q.toleranceBase && uExp === q.ansExp) {
+                        isCorrect = true;
+                    }
+                    correctText = `Solución esperada: ${q.ansBase} x 10^${q.ansExp} ${q.unit}`;
+                }
+
+                const feedbackNode = document.getElementById(`feedback-${q.id}`);
+                feedbackNode.style.display = "block";
+                
+                userInputs.forEach(inp => {
+                    inp.disabled = true;
+                    if (isCorrect) {
+                        inp.classList.add('correct');
+                    } else {
+                        inp.classList.add('incorrect');
+                    }
+                });
+
+                if (isCorrect) {
+                    correctCount++;
+                    feedbackNode.innerHTML = "¡Correcto! ✅";
+                    feedbackNode.className = "feedback ml-4 text-green-600";
+                } else {
+                    feedbackNode.innerHTML = `❌ Incorrecto. ${correctText}`;
+                    feedbackNode.className = "feedback ml-4 text-red-600";
+                }
+            });
+
+            document.getElementById('res-correct').innerText = correctCount;
+            document.getElementById('res-incorrect').innerText = quizData.length - correctCount;
+            
+            // Ocultar botón de enviar, mostrar los resultados
+            document.querySelector('button[type="submit"]').style.display = 'none';
+            document.getElementById('screen-results').classList.remove('hidden');
+            
+            // Scroll hacia la zona de resultados para que el usuario la vea
+            document.getElementById('screen-quiz').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
