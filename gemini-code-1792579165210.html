@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masterclass: Factores de Conversión - Wisdom Corner Academy</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    :root {
+      --primary: #0f2744;
+      --secondary: #1e3a8a;
+      --accent: #d4af37;
+      --accent-light: #fef3c7;
+      --dark: #0a192c;
+      --light: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --success: #10b981;
+      --error: #ef4444;
+      --border: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 10%, #1e293b 0%, #0a192c 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    .player-card {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 980px;
+      min-height: 680px;
+      border-radius: 20px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 2px solid rgba(212, 175, 55, 0.4);
+    }
+
+    .top-header {
+      background: linear-gradient(135deg, #0f2744, #1e3a8a);
+      color: white;
+      padding: 0.85rem 1.6rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px solid var(--accent);
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-img {
+      height: 52px;
+      width: 52px;
+      object-fit: contain;
+      background: white;
+      border-radius: 10px;
+      padding: 2px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+      border: 1px solid var(--accent);
+    }
+
+    .brand-title h1 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: #ffffff;
+    }
+
+    .brand-title p {
+      font-size: 0.76rem;
+      color: #fef3c7;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .step-badge {
+      background: rgba(212, 175, 55, 0.2);
+      color: #fff;
+      padding: 0.35rem 0.95rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border: 1px solid var(--accent);
+    }
+
+    .exp-toolbar {
+      background: #0a192c;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.4);
+      padding: 0.45rem 1.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .exp-label {
+      color: var(--accent);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .exp-buttons {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .exp-btn {
+      background: #1e293b;
+      color: #ffffff;
+      border: 1px solid #475569;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .exp-btn:hover {
+      background: var(--accent);
+      color: #0f2744;
+      border-color: var(--accent);
+    }
+
+    .lesson-stage {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      padding: 1.5rem;
+      gap: 1.5rem;
+      align-items: stretch;
+      background: #f8fafc;
+    }
+
+    @media (max-width: 820px) {
+      .lesson-stage {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+        gap: 1rem;
+      }
+    }
+
+    .teacher-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      background: white;
+      padding: 1.2rem;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    .avatar-wrapper {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 4px solid var(--accent);
+      box-shadow: 0 6px 18px rgba(212, 175, 55, 0.25);
+      margin-bottom: 0.8rem;
+      background: #e2e8f0;
+    }
+
+    .avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .teacher-name {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .speech-bubble {
+      background: #fdfbf7;
+      border: 1.5px solid var(--accent);
+      border-radius: 14px;
+      padding: 0.85rem;
+      margin-top: 0.7rem;
+      font-size: 0.85rem;
+      line-height: 1.45;
+      color: #0f2744;
+      font-weight: 600;
+      text-align: left;
+      flex-grow: 1;
+    }
+
+    .content-col {
+      background: white;
+      min-height: 490px;
+      border-radius: 18px;
+      padding: 1.6rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow-y: auto;
+      max-height: 560px;
+    }
+
+    .slide {
+      display: none;
+    }
+
+    .slide.active {
+      display: block;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide-badge {
+      display: inline-block;
+      background: #fef3c7;
+      color: #92400e;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.5px;
+    }
+
+    .slide-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 0.6rem;
+    }
+
+    .formula-card {
+      background: linear-gradient(135deg, #0f2744, #1e3a8a);
+      color: white;
+      padding: 0.9rem 1.1rem;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 0.6rem 0;
+      text-align: center;
+      line-height: 1.5;
+      border-left: 5px solid var(--accent);
+    }
+
+    .stair-container {
+      background: #fdfbf7;
+      border: 2px solid var(--accent);
+      border-radius: 12px;
+      padding: 12px;
+      margin: 8px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .stair-graphic {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 4px;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .stair-step {
+      background: #0f2744;
+      color: white;
+      font-weight: 800;
+      font-size: 0.85rem;
+      padding: 6px 10px;
+      border-radius: 6px;
+      text-align: center;
+      border: 1px solid var(--accent);
+    }
+
+    .stair-arrow {
+      color: var(--accent);
+      font-weight: 900;
+      font-size: 0.9rem;
+    }
+
+    .stair-rules {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .rule-card-down {
+      background: #ecfdf5;
+      border-left: 4px solid var(--success);
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: #065f46;
+    }
+
+    .rule-card-up {
+      background: #eff6ff;
+      border-left: 4px solid var(--secondary);
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: #1e40af;
+    }
+
+    .math-fraction {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 4px;
+      font-size: 1.05em;
+      font-weight: bold;
+    }
+    .math-fraction .num {
+      border-bottom: 2px solid currentColor;
+      padding-bottom: 1px;
+    }
+    .math-fraction .den {
+      padding-top: 1px;
+    }
+
+    .info-callout {
+      padding: 0.75rem 0.95rem;
+      border-radius: 8px;
+      margin: 0.65rem 0;
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+    .info-tip {
+      background: #fffbeb;
+      border-left: 4px solid var(--accent);
+      color: #92400e;
+    }
+    .info-alert {
+      background: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      color: #1e40af;
+    }
+
+    .table-container {
+      max-height: 250px;
+      overflow-y: auto;
+      margin: 0.6rem 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 0.55rem 0.75rem;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #475569;
+      font-weight: 700;
+    }
+
+    .quiz-question {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.85rem;
+      color: #0f172a;
+      line-height: 1.4;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .quiz-opt-btn {
+      background: #f8fafc;
+      border: 2px solid var(--border);
+      padding: 0.7rem 0.95rem;
+      border-radius: 9px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+      color: #1e293b;
+    }
+
+    .quiz-opt-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: #fdfbf7;
+    }
+
+    .quiz-opt-btn.correct {
+      border-color: var(--success) !important;
+      background: #ecfdf5 !important;
+      color: #065f46 !important;
+    }
+
+    .quiz-opt-btn.wrong {
+      border-color: var(--error) !important;
+      background: #fef2f2 !important;
+      color: #991b1b !important;
+    }
+
+    .fill-box {
+      background: #f8fafc;
+      border: 2px solid var(--border);
+      padding: 1.1rem;
+      border-radius: 12px;
+      margin: 0.7rem 0;
+    }
+
+    .fill-sentence {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .fill-input {
+      font-size: 1.05rem;
+      font-weight: 700;
+      padding: 0.4rem 0.8rem;
+      border: 2px solid #3b82f6;
+      border-radius: 6px;
+      color: #0f2744;
+      background: white;
+      outline: none;
+      min-width: 140px;
+      text-align: center;
+    }
+
+    .fill-input:focus {
+      border-color: var(--accent);
+    }
+
+    .fill-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.3rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 0.4rem;
+      transition: background 0.2s;
+    }
+
+    .fill-btn:hover {
+      background: var(--secondary);
+    }
+
+    .match-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.1rem;
+      margin: 0.7rem 0;
+    }
+
+    .match-col {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .match-item {
+      background: #f8fafc;
+      border: 2px solid var(--border);
+      padding: 0.65rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+      text-align: center;
+      line-height: 1.35;
+    }
+
+    .match-item:hover {
+      border-color: var(--accent);
+      background: #fdfbf7;
+    }
+
+    .match-item.selected {
+      border-color: var(--accent) !important;
+      background: #fef3c7 !important;
+      color: #92400e !important;
+    }
+
+    .match-item.matched {
+      border-color: var(--success) !important;
+      background: #ecfdf5 !important;
+      color: #065f46 !important;
+      cursor: default;
+    }
+
+    .quiz-feedback {
+      margin-top: 0.8rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      min-height: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .final-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+      gap: 12px;
+      margin: 10px 0;
+      max-height: 390px;
+      overflow-y: auto;
+      padding: 4px;
+    }
+
+    .final-card {
+      background: #f8fafc;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .final-card.ok {
+      border-color: var(--success);
+      background: #ecfdf5;
+    }
+
+    .final-card.ko {
+      border-color: var(--error);
+      background: #fef2f2;
+    }
+
+    .final-card input {
+      width: 100%;
+      padding: 6px 8px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      text-align: center;
+      color: var(--primary);
+    }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.74rem;
+      color: #64748b;
+    }
+
+    .attempts-badge {
+      background: #e2e8f0;
+      color: #334155;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .btn-verify-item {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 5px 8px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-verify-item:hover:not(:disabled) {
+      background: var(--secondary);
+    }
+
+    .btn-verify-item:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .card-feedback {
+      font-size: 0.76rem;
+      font-weight: 700;
+      min-height: 1.2rem;
+    }
+
+    .bottom-bar {
+      background: #f1f5f9;
+      border-top: 1px solid var(--border);
+      padding: 0.85rem 1.6rem;
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+    }
+
+    .nav-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.65rem 1.4rem;
+      border-radius: 9px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      background: var(--secondary);
+    }
+
+    .nav-btn:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .progress-track {
+      flex: 1;
+      height: 9px;
+      background: #cbd5e1;
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #1e3a8a, #d4af37);
+      width: 4%;
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="player-card">
+    
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="brand-wrap">
+        <img id="headerLogo" src="Logo.png" alt="Logo" class="logo-img">
+        <div class="brand-title">
+          <h1>WISDOM CORNER ACADEMY</h1>
+          <p>Física y Química • Factores de Conversión</p>
+        </div>
+      </div>
+      <div class="step-badge" id="stepBadge">Paso 1 / 25</div>
+    </header>
+
+    <!-- Barra de Exponentes Virtuales -->
+    <div class="exp-toolbar">
+      <span class="exp-label">⌨️ Botones de Exponentes (clic para escribir en el hueco):</span>
+      <div class="exp-buttons">
+        <button type="button" class="exp-btn" onclick="addChar('²')">²</button>
+        <button type="button" class="exp-btn" onclick="addChar('³')">³</button>
+        <button type="button" class="exp-btn" onclick="addChar('⁴')">⁴</button>
+        <button type="button" class="exp-btn" onclick="addChar('·10³')">·10³</button>
+        <button type="button" class="exp-btn" onclick="addChar('·10⁶')">·10⁶</button>
+        <button type="button" class="exp-btn" onclick="addChar('·10⁻³')">·10⁻³</button>
+        <button type="button" class="exp-btn" onclick="addChar('/')">/</button>
+        <button type="button" class="exp-btn" onclick="addChar(',')">,</button>
+      </div>
+    </div>
+
+    <!-- Escenario Principal -->
+    <main class="lesson-stage">
+      <!-- Columna Profesor con Avatar -->
+      <section class="teacher-col">
+        <div class="avatar-wrapper">
+          <img id="teacherAvatar" src="consejo.png" alt="Profe" class="avatar-img">
+        </div>
+        <h3 class="teacher-name">Tu Profe Wisdom</h3>
+        <div class="speech-bubble" id="teacherVoice">
+          ¡Hola! Para saber qué número poner en tu factor de conversión, usamos la escalera: al bajar multiplicamos y al subir dividimos. ¡Vamos a verla paso a paso!
+        </div>
+      </section>
+
+      <!-- Columna Contenido Dinámico -->
+      <section class="content-col">
+
+        <!-- ================= MÓDULO 1: LA ESCALERA LINEAL (x10 / ÷10) ================= -->
+        <!-- PASO 1 -->
+        <div class="slide active" id="slide-1" 
+             data-avatar="consejo.png"
+             data-speech="En las unidades normales cada escalón vale 10. Si bajas la escalera multiplicas por 10 por cada escalón; si subes, divides entre 10.">
+          <span class="slide-badge">Módulo 1: La Escalera Lineal</span>
+          <h2 class="slide-title">1. La Escalera de Unidades Normales</h2>
+          
+          <div class="stair-container">
+            <div class="stair-graphic">
+              <span class="stair-step">km</span> <span class="stair-arrow">➔</span>
+              <span class="stair-step">hm</span> <span class="stair-arrow">➔</span>
+              <span class="stair-step">dam</span> <span class="stair-arrow">➔</span>
+              <span class="stair-step" style="background:#d4af37; color:#0f2744;">m / g / l</span> <span class="stair-arrow">➔</span>
+              <span class="stair-step">dm</span> <span class="stair-arrow">➔</span>
+              <span class="stair-step">cm</span> <span class="stair-arrow">➔</span>
+              <span class="stair-step">mm</span>
+            </div>
+            <div class="stair-rules">
+              <div class="rule-card-down">
+                <strong>⬇️ BAJAR ESCALONES:</strong><br>
+                Se <strong>MULTIPLICA por 10</strong> por cada escalón que bajes (1 escalón: ×10, 2 escalones: ×100, 3 escalones: ×1.000).
+              </div>
+              <div class="rule-card-up">
+                <strong>⬆️ SUBIR ESCALONES:</strong><br>
+                Se <strong>DIVIDE entre 10</strong> por cada escalón que subas (1 escalón: ÷10, 2 escalones: ÷100, 3 escalones: ÷1.000).
+              </div>
+            </div>
+          </div>
+
+          <div class="formula-card">
+            Ejemplo: Pasar <strong>450 m</strong> a <strong>km</strong> (subimos 3 escalones ➔ dividimos entre 1000):<br><br>
+            450 m · 
+            <span class="math-fraction">
+              <span class="num">1 km</span>
+              <span class="den">1000 m</span>
+            </span> 
+            = 
+            <span class="math-fraction">
+              <span class="num">450 · 1</span>
+              <span class="den">1000</span>
+            </span> 
+            km = <strong>0,45 km</strong>
+          </div>
+        </div>
+
+        <!-- PASO 2 -->
+        <div class="slide" id="slide-2" 
+             data-avatar="pensativo.png"
+             data-speech="Si tengo segundos arriba y quiero pasarlos a horas, ¿dónde coloco los segundos en la fracción para cancelarlos?">
+          <span class="slide-badge">Ejercicio 1.1</span>
+          <div class="quiz-question">Si tienes una cantidad en segundos (s) en el numerador y quieres pasarla a horas (h), ¿dónde colocas los segundos en la fracción del factor?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt-btn" data-correct="true" data-feedback="¡Correcto! Como los segundos estaban arriba, se ponen abajo en el factor para poder simplificarlos y eliminarlos.">A) En el denominador (abajo)</button>
+            <button class="quiz-opt-btn" data-correct="false" data-feedback="Incorrecto: Si los pones arriba, se multiplicarían y obtendrías segundos al cuadrado.">B) En el numerador (arriba)</button>
+            <button class="quiz-opt-btn" data-correct="false" data-feedback="No, la unidad antigua siempre debe escribirse para cancelarse.">C) En ningún sitio, se divide directamente</button>
+          </div>
+          <div class="quiz-feedback" id="fb-2"></div>
+        </div>
+
+        <!-- PASO 3 -->
+        <div class="slide" id="slide-3" 
+             data-avatar="consejo 2.png"
+             data-speech="Convierte 850 gramos a kilogramos. Para subir de gramos a kilogramos subes 3 escalones, por lo que divides entre 1000.">
+          <span class="slide-badge">Ejercicio 1.2 (Ejemplo Guiado)</span>
+          <h2 class="slide-title">Masa Lineal (Subir Escalones)</h2>
+          <div class="fill-box">
+            <div class="fill-sentence">
+              850 g = <input type="text" class="fill-input" id="fill-input-3" placeholder="ej. 0,85" autocomplete="off"> kg
+            </div>
+            <p style="font-size:0.8rem; color:#64748b;">(Ejemplo guiado: sube 3 escalones en la escalera ➔ divide entre 1000)</p>
+            <button class="fill-btn" onclick="checkFill(3, ['0.85', '0,85'], 'Pista: De gramos a kilogramos se suben 3 escalones. Divide 850 entre 1.000.')">Comprobar</button>
+          </div>
+          <div class="quiz-feedback" id="fb-3"></div>
+        </div>
+
+        <!-- PASO 4 -->
+        <div class="slide" id="slide-4" 
+             data-avatar="alegre.jpg"
+             data-speech="Une cada magnitud simple con su equivalencia correcta haciendo clic en una y luego en su pareja.">
+          <span class="slide-badge">Ejercicio 1.3</span>
+          <h2 class="slide-title">Equivalencias de Tiempo y Longitud</h2>
+          <div class="match-grid" id="match-grid-4">
+            <div class="match-col">
+              <div class="match-item" data-pair="1">1 hora (h)</div>
+              <div class="match-item" data-pair="2">1 kilómetro (km)</div>
+              <div class="match-item" data-pair="3">1 minuto (min)</div>
+            </div>
+            <div class="match-col">
+              <div class="match-item" data-pair="2">1000 m</div>
+              <div class="match-item" data-pair="1">3600 s</div>
+              <div class="match-item" data-pair="3">60 s</div>
+            </div>
+          </div>
+          <div class="quiz-feedback" id="fb-4"></div>
+        </div>
+
+        <!-- PASO 5 -->
+        <div class="slide" id="slide-5" 
+             data-avatar="pensativo.png"
+             data-speech="Convierte 2,5 horas a segundos. ¡Aplica la equivalencia tú misma!">
+          <span class="slide-badge">Ejercicio 1.4</span>
+          <h2 class="slide-title">Tiempo en el Sistema Internacional</h2>
+          <div class="fill-box">
+            <div class="fill-sentence">
+              2,5 h = <input type="text" class="fill-input" id="fill-input-5" placeholder="Resultado" autocomplete="off"> s
+            </div>
+            <button class="fill-btn" onclick="checkFill(5, ['9000'], 'Pista: 1 hora = 3.600 segundos. Multiplica 2,5 por 3.600.')">Comprobar</button>
+          </div>
+          <div class="quiz-feedback" id="fb-5"></div>
+        </div>
+
+        <!-- ================= MÓDULO 2: PISTAS Y EQUIVALENCIAS CLAVE ================= -->
+        <!-- PASO 6 -->
+        <div class="slide" id="slide-6" 
+             data-avatar="secreto.jpg"
+             data-speech="¡Atenta a este secreto! Son las 3 pistas clave que siempre aparecen en los problemas y ejercicios de examen.">
+          <span class="slide-badge">Módulo 2: Pistas Clave</span>
+          <h2 class="slide-title">2. Pistas Clave: Capacidad, Volumen y Masa</h2>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Equivalencia Clave</th>
+                  <th>Significado en la vida real</th>
+                  <th>Aplicación directa</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>1 dm³ = 1 Litro</strong></td>
+                  <td>Un cubo de 10 cm de lado contiene exactamente 1 L de agua.</td>
+                  <td>Puente directo entre volumen y litros.</td>
+                </tr>
+                <tr>
+                  <td><strong>1 cm³ = 1 mL</strong></td>
+                  <td>Un centímetro cúbico es exactamente igual a un mililitro.</td>
+                  <td>Jeringuillas, probetas y pipetas de laboratorio.</td>
+                </tr>
+                <tr>
+                  <td><strong>1 Litro = 1 Kilogramo</strong></td>
+                  <td>Solo para agua pura/destilada, ya que su densidad es 1 kg/L.</td>
+                  <td>Conectar masa y capacidad en problemas de agua.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="info-callout info-tip">
+            💡 <strong>Otra pista muy útil:</strong> 1 m³ = 1000 dm³ = <strong>1000 Litros</strong>. ¡En un metro cúbico caben mil botellas de litro!
+          </div>
+        </div>
+
+        <!-- PASO 7 -->
+        <div class="slide" id="slide-7" 
+             data-avatar="pensativo.png"
+             data-speech="¿Cuántos litros hay en un recipiente de 15 decímetros cúbicos? Recuerda la pista mágica.">
+          <span class="slide-badge">Ejercicio 2.1</span>
+          <div class="quiz-question">Si tenemos un recipiente de 15 dm³, ¿cuántos litros (L) contiene exactamente?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt-btn" data-correct="false" data-feedback="Incorrecto: Recuerda que 1 dm³ es exactamente 1 L, no hay que añadir ceros.">A) 1500 L</button>
+            <button class="quiz-opt-btn" data-correct="true" data-feedback="¡Exacto! Como 1 dm³ = 1 L, 15 dm³ equivalen a exactamente 15 L.">B) 15 L</button>
+            <button class="quiz-opt-btn" data-correct="false" data-feedback="No, la relación es 1 a 1, no hay que dividir entre 1000.">C) 0,015 L</button>
+          </div>
+          <div class="quiz-feedback" id="fb-7"></div>
+        </div>
+
+        <!-- PASO 8 -->
+        <div class="slide" id="slide-8" 
+             data-avatar="consejo.png"
+             data-speech="Un frasco de laboratorio tiene 250 centímetros cúbicos. ¿A cuántos mililitros equivale? Este primer ejemplo usa la pista 1 cm³ = 1 mL.">
+          <span class="slide-badge">Ejercicio 2.2 (Ejemplo Guiado)</span>
+          <h2 class="slide-title">Centímetros cúbicos y Mililitros</h2>
+          <div class="fill-box">
+            <div class="fill-sentence">
+              250 cm³ = <input type="text" class="fill-input" id="fill-input-8" placeholder="Resultado" autocomplete="off"> mL
+            </div>
+            <p style="font-size:0.8rem; color:#64748b;">(Ejemplo guiado: recuerda que 1 cm³ = 1 mL)</p>
+            <button class="fill-btn" onclick="checkFill(8, ['250'], 'Pista: 1 cm³ equivale exactamente a 1 mL. Es una relación directa 1 a 1.')">Comprobar</button>
+          </div>
+          <div class="quiz-feedback" id="fb-8"></div>
+        </div>
+
+        <!-- PASO 9 -->
+        <div class="slide" id="slide-9" 
+             data-avatar="pensativo.png"
+             data-speech="Si tienes 8 litros de agua pura en una garrafa, ¿cuántos kilogramos pesará en la báscula?">
+          <span class="slide-badge">Ejercicio 2.3</span>
+          <h2 class="slide-title">Masa del Agua</h2>
+          <div class="fill-box">
+            <div class="fill-sentence">
+              8 L de agua pura = <input type="text" class="fill-input" id="fill-input-9" placeholder="Resultado" autocomplete="off"> kg
+            </div>
+            <button class="fill-btn" onclick="checkFill(9, ['8'], 'Pista: En el agua líquida pura, 1 Litro pesa exactamente 1 Kilogramo.')">Comprobar</button>
+          </div>
+          <div class="quiz-feedback" id="fb-9"></div>
+        </div>
+
+        <!-- PASO 10 -->
+        <div class="slide" id="slide-10" 
+             data-avatar="consejo 2.png"
+             data-speech="¿Cuántos litros contiene un depósito de 1 metro cúbico?">
+          <span class="slide-badge">Ejercicio 2.4</span>
+          <div class="quiz-question">¿A cuántos litros equivale exactamente 1 m³ de agua?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt-btn" data-correct="false" data-feedback="100 L solo sería una décima parte.">A) 100 L</button>
+            <button class="quiz-opt-btn" data-correct="true" data-feedback="¡Correcto! 1 m³ = 1000 dm³ = 1000 Litros.">B) 1000 L</button>
+            <button class="quiz-opt-btn" data-correct="false" data-feedback="1 L solo es 1 dm³, no un metro cúbico.">C) 1 L</button>
+          </div>
+          <div class="quiz-feedback" id="fb-10"></div>
+        </div>
+
+        <!-- ================= MÓDULO 3: LA ESCALERA AL CUADRADO (x100 / ÷100) ================= -->
+        <!-- PASO 11 -->
+        <div class="slide" id="slide-11" 
+             data-avatar="estresado.png"
+             data-speech="En la escalera al cuadrado, cada escalón tiene dos ceros: 10 al cuadrado es 100. Al bajar multiplicas por 100 por escalón, y al subir divides entre 100.">
+          <span class="slide-badge">Módulo 3: Superficie (m²)</span>
+          <h2 class="slide-title">3. La Escalera de Unidades al Cuadrado</h2>
+          
+          <div class="stair-container">
+            <div class="stair-graphic">
+              <span class="stair-step">km²</span> <span class="stair-arrow">➔</span>
+              <span class="stair-step">hm²</span> <span class="stair-arrow">➔</span>
+              <span class="stair-step">dam²</span> <span class="stair-arrow">➔</span>
+              <span class="stair-step" style="background:#d4af37; color:#0f2744;">m²</span> <span class="stair-arrow">➔</span>
+              <span class="stair-step">dm²</span> <span class="stair-arrow">➔</span>
+              <span class="stair-step">cm²</span> <span class="stair-arrow">➔</span>
+              <span class="stair-step">mm²</span>
+            </div>
+            <div class="stair-rules">
+              <div class="rule-card-down">
+                <strong>⬇️ BAJAR ESCALONES (×100):</strong><br>
+                Se <strong>MULTIPLICA por 100 (10²)</strong> por cada escalón (1 escalón: ×100, 2 escalones: ×10.000, 3 escalones: ×1.000.000).
+              </div>
+              <div class="rule-card-up">
+                <strong>⬆️ SUBIR ESCALONES (÷100):</strong><br>
+                Se <strong>DIVIDE entre 100 (10²)</strong> por cada escalón (1 escalón: ÷100, 2 escalones: ÷10.000, 3 escalones: ÷1.000.000).
+              </div>
+            </div>
+          </div>
+
+          <div class="formula-card">
+            Ejemplo: Pasar <strong>3,5 m²</strong> a <strong>cm²</strong> (bajamos 2 escalones ➔ multiplicamos por 10.000):<br><br>
+            3,5 m² · 
+            <span class="math-fraction">
+              <span class="num">10.000 cm²</span>
+              <span class="den">1 m²</span>
+            </span> 
+            = 3,5 · 10.000 = <strong>35.000 cm²</strong>
+          </div>
+        </div>
+
+        <!-- PASO 12 -->
+        <div class="slide" id="slide-12" 
+             data-avatar="consejo.png"
+             data-speech="Pasa 3,5 metros cuadrados a centímetros cuadrados. Este primer ejemplo te guía: bajas 2 escalones en la escalera del cuadrado, multiplicas por 10.000.">
+          <span class="slide-badge">Ejercicio 3.1 (Ejemplo Guiado)</span>
+          <h2 class="slide-title">De m² a cm²</h2>
+          <div class="fill-box">
+            <div class="fill-sentence">
+              3,5 m² = <input type="text" class="fill-input" id="fill-input-12" placeholder="Resultado" autocomplete="off"> cm²
+            </div>
+            <p style="font-size:0.8rem; color:#64748b;">(Ejemplo guiado: bajar 2 escalones de superficie ➔ multiplica por 10.000)</p>
+            <button class="fill-btn" onclick="checkFill(12, ['35000', '35.000'], 'Pista: De m² a cm² se bajan 2 escalones. Cada uno son 2 ceros (×10.000). Multiplica 3,5 por 10.000.')">Comprobar</button>
+          </div>
+          <div class="quiz-feedback" id="fb-12"></div>
+        </div>
+
+        <!-- PASO 13 -->
+        <div class="slide" id="slide-13" 
+             data-avatar="pensativo.png"
+             data-speech="Pasa 400 centímetros cuadrados a metros cuadrados. Fíjate en los escalones que subes.">
+          <span class="slide-badge">Ejercicio 3.2</span>
+          <h2 class="slide-title">De cm² a m²</h2>
+          <div class="fill-box">
+            <div class="fill-sentence">
+              400 cm² = <input type="text" class="fill-input" id="fill-input-13" placeholder="Resultado" autocomplete="off"> m²
+            </div>
+            <button class="fill-btn" onclick="checkFill(13, ['0.04', '0,04'], 'Pista: De cm² a m² subes 2 escalones de superficie. Al subir se divide entre 10.000 (4 ceros).')">Comprobar</button>
+          </div>
+          <div class="quiz-feedback" id="fb-13"></div>
+        </div>
+
+        <!-- PASO 14 -->
+        <div class="slide" id="slide-14" 
+             data-avatar="consejo 2.png"
+             data-speech="¿Cuántos metros cuadrados hay en 5 kilómetros cuadrados? Cuenta los escalones de superficie.">
+          <span class="slide-badge">Ejercicio 3.3</span>
+          <div class="quiz-question">Si de km² a m² bajamos 3 escalones de superficie, ¿cuántos m² hay en 5 km²?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt-btn" data-correct="false" data-feedback="5000 solo sería si fuese lineal.">A) 5000 m²</button>
+            <button class="quiz-opt-btn" data-correct="true" data-feedback="¡Correcto! 3 escalones de superficie son 6 ceros: 5 · 1.000.000 = 5.000.000 m² (o 5·10⁶ m²).">B) 5.000.000 m² (5·10⁶ m²)</button>
+            <button class="quiz-opt-btn" data-correct="false" data-feedback="Faltan ceros.">C) 50.000 m²</button>
+          </div>
+          <div class="quiz-feedback" id="fb-14"></div>
+        </div>
+
+        <!-- ================= MÓDULO 4: LA ESCALERA AL CUBO (x1000 / ÷1000) ================= -->
+        <!-- PASO 15 -->
+        <div class="slide" id="slide-15" 
+             data-avatar="consejo.png"
+             data-speech="En la escalera al cubo, cada escalón tiene tres ceros: 10 al cubo es 1000. Al bajar multiplicas por 1000 por escalón, y al subir divides entre 1000.">
+          <span class="slide-badge">Módulo 4: Volumen (m³)</span>
+          <h2 class="slide-title">4. La Escalera de Unidades al Cubo</h2>
+          
+          <div class="stair-container">
+            <div class="stair-graphic">
+              <span class="stair-step">km³</span> <span class="stair-arrow">➔</span>
+              <span class="stair-step">hm³</span> <span class="stair-arrow">➔</span>
+              <span class="stair-step">dam³</span> <span class="stair-arrow">➔</span>
+              <span class="stair-step" style="background:#d4af37; color:#0f2744;">m³</span> <span class="stair-arrow">➔</span>
+              <span class="stair-step">dm³</span> <span class="stair-arrow">➔</span>
+              <span class="stair-step">cm³</span> <span class="stair-arrow">➔</span>
+              <span class="stair-step">mm³</span>
+            </div>
+            <div class="stair-rules">
+              <div class="rule-card-down">
+                <strong>⬇️ BAJAR ESCALONES (×1.000):</strong><br>
+                Se <strong>MULTIPLICA por 1.000 (10³)</strong> por cada escalón (1 escalón: ×1.000, 2 escalones: ×1.000.000).
+              </div>
+              <div class="rule-card-up">
+                <strong>⬆️ SUBIR ESCALONES (÷1.000):</strong><br>
+                Se <strong>DIVIDE entre 1.000 (10³)</strong> por cada escalón (1 escalón: ÷1.000, 2 escalones: ÷1.000.000).
+              </div>
+            </div>
+          </div>
+
+          <div class="formula-card">
+            Ejemplo: Pasar <strong>0,04 m³</strong> a <strong>dm³</strong> (bajamos 1 escalón ➔ multiplicamos por 1000):<br><br>
+            0,04 m³ · 
+            <span class="math-fraction">
+              <span class="num">1000 dm³</span>
+              <span class="den">1 m³</span>
+            </span> 
+            = 0,04 · 1000 = <strong>40 dm³ = 40 Litros</strong>
+          </div>
+        </div>
+
+        <!-- PASO 16 -->
+        <div class="slide" id="slide-16" 
+             data-avatar="pensativo.png"
+             data-speech="Pasa 0,04 metros cúbicos a litros. Bajas un escalón al cubo hacia dm³ y multiplicas por 1000.">
+          <span class="slide-badge">Ejercicio 4.1 (Ejemplo Guiado)</span>
+          <h2 class="slide-title">De m³ a Litros</h2>
+          <div class="fill-box">
+            <div class="fill-sentence">
+              0,04 m³ = <input type="text" class="fill-input" id="fill-input-16" placeholder="Resultado" autocomplete="off"> L
+            </div>
+            <p style="font-size:0.8rem; color:#64748b;">(Ejemplo guiado: 1 m³ = 1000 dm³ = 1000 L)</p>
+            <button class="fill-btn" onclick="checkFill(16, ['40'], 'Pista: 1 m³ son 1.000 dm³. Como 1 dm³ = 1 Litro, multiplica 0,04 por 1.000.')">Comprobar</button>
+          </div>
+          <div class="quiz-feedback" id="fb-16"></div>
+        </div>
+
+        <!-- PASO 17 -->
+        <div class="slide" id="slide-17" 
+             data-avatar="consejo 2.png"
+             data-speech="Pasa 500 centímetros cúbicos a litros. Resuélvelo aplicando la equivalencia correspondiente.">
+          <span class="slide-badge">Ejercicio 4.2</span>
+          <h2 class="slide-title">De cm³ a Litros</h2>
+          <div class="fill-box">
+            <div class="fill-sentence">
+              500 cm³ = <input type="text" class="fill-input" id="fill-input-17" placeholder="Resultado" autocomplete="off"> L
+            </div>
+            <button class="fill-btn" onclick="checkFill(17, ['0.5', '0,5'], 'Pista: 500 cm³ = 500 mL. Para pasar de mL a Litros subes 3 escalones: divide 500 entre 1.000.')">Comprobar</button>
+          </div>
+          <div class="quiz-feedback" id="fb-17"></div>
+        </div>
+
+        <!-- PASO 18 -->
+        <div class="slide" id="slide-18" 
+             data-avatar="alegre.jpg"
+             data-speech="Si tienes 0,003 metros cúbicos, ¿cuántos mililitros son?">
+          <span class="slide-badge">Ejercicio 4.3</span>
+          <div class="quiz-question">Transforma 0,003 m³ a mililitros (mL):</div>
+          <div class="quiz-options">
+            <button class="quiz-opt-btn" data-correct="false" data-feedback="Incorrecto: 0,003 m³ son 3 L, no 30 mL.">A) 30 mL</button>
+            <button class="quiz-opt-btn" data-correct="true" data-feedback="¡Genial! 0,003 m³ = 3 dm³ = 3 Litros = 3000 mL.">B) 3000 mL</button>
+            <button class="quiz-opt-btn" data-correct="false" data-feedback="Demasiados ceros.">C) 300.000 mL</button>
+          </div>
+          <div class="quiz-feedback" id="fb-18"></div>
+        </div>
+
+        <!-- ================= MÓDULO 5: CONVERSIONES COMPUESTAS EXPLICADAS ================= -->
+        <!-- PASO 19 -->
+        <div class="slide" id="slide-19" 
+             data-avatar="consejo.png"
+             data-speech="Mira cómo se escribe una magnitud compuesta: el kilómetro arriba y la hora abajo. Ponemos 1000 porque 1 km tiene 1000 m, y ponemos 3600 porque 1 hora tiene 3600 segundos.">
+          <span class="slide-badge">Módulo 5: Conversiones Compuestas</span>
+          <h2 class="slide-title">5. Velocidad: Kilómetros Arriba y Horas Abajo</h2>
+          
+          <div class="formula-card" style="font-size: 1.1rem; line-height: 2.2;">
+            90 
+            <span class="math-fraction" style="color:#fef3c7;">
+              <span class="num">km</span>
+              <span class="den">h</span>
+            </span> 
+            · 
+            <span class="math-fraction">
+              <span class="num">1000 m</span>
+              <span class="den">1 km</span>
+            </span> 
+            · 
+            <span class="math-fraction">
+              <span class="num">1 h</span>
+              <span class="den">3600 s</span>
+            </span> 
+            = 
+            <span class="math-fraction">
+              <span class="num">90 · 1000</span>
+              <span class="den">3600</span>
+            </span> 
+            <span class="math-fraction" style="color:#a7f3d0;">
+              <span class="num">m</span>
+              <span class="den">s</span>
+            </span> 
+            = <strong>25 m/s</strong>
+          </div>
+
+          <div class="info-callout info-tip">
+            📌 <strong>¿Por qué ponemos cada número?</strong><br>
+            • <strong>El 1000 arriba:</strong> Porque nos piden metros, y <strong>1 km = 1000 m</strong> (el km se pone abajo para tacharlo con el de arriba).<br>
+            • <strong>El 3600 abajo:</strong> Porque nos piden segundos, y <strong>1 hora = 3600 s</strong> (la h se pone arriba para tacharla con la h de abajo).
+          </div>
+        </div>
+
+        <!-- PASO 20 -->
+        <div class="slide" id="slide-20" 
+             data-avatar="consejo 2.png"
+             data-speech="Pasa 72 km/h a m/s con las fracciones correspondientes. Este primer ejemplo te recuerda la fórmula.">
+          <span class="slide-badge">Ejercicio 5.1 (Ejemplo Guiado)</span>
+          <h2 class="slide-title">Velocidad en Fracción</h2>
+          <div class="fill-box">
+            <div class="fill-sentence">
+              72 
+              <span class="math-fraction" style="font-size: 1rem;">
+                <span class="num">km</span>
+                <span class="den">h</span>
+              </span> 
+              = <input type="text" class="fill-input" id="fill-input-20" placeholder="Resultado" autocomplete="off"> m/s
+            </div>
+            <p style="font-size:0.8rem; color:#64748b;">(Ejemplo guiado: multiplica por 1000 y divide entre 3600)</p>
+            <button class="fill-btn" onclick="checkFill(20, ['20'], 'Pista: Multiplica por 1.000 para pasar km a m, y divide entre 3.600 para pasar h a s.')">Comprobar</button>
+          </div>
+          <div class="quiz-feedback" id="fb-20"></div>
+        </div>
+
+        <!-- PASO 21 -->
+        <div class="slide" id="slide-21" 
+             data-avatar="pensativo.png"
+             data-speech="Un guepardo corre a 30 m/s. Pásalo a km/h haciendo el cálculo por ti misma.">
+          <span class="slide-badge">Ejercicio 5.2</span>
+          <h2 class="slide-title">De m/s a km/h</h2>
+          <div class="fill-box">
+            <div class="fill-sentence">
+              30 
+              <span class="math-fraction" style="font-size: 1rem;">
+                <span class="num">m</span>
+                <span class="den">s</span>
+              </span> 
+              = <input type="text" class="fill-input" id="fill-input-21" placeholder="Resultado" autocomplete="off"> km/h
+            </div>
+            <button class="fill-btn" onclick="checkFill(21, ['108'], 'Pista: Al revés que antes: multiplica 30 por 3.600 y divide entre 1.000 (o directamente multiplica 30 · 3,6).')">Comprobar</button>
+          </div>
+          <div class="quiz-feedback" id="fb-21"></div>
+        </div>
+
+        <!-- PASO 22 -->
+        <div class="slide" id="slide-22" 
+             data-avatar="consejo.png"
+             data-speech="La densidad del aluminio es 2,7 g/cm³. ¿Cuál es en el Sistema Internacional (kg/m³)?">
+          <span class="slide-badge">Ejercicio 5.3</span>
+          <h2 class="slide-title">Densidad del Aluminio</h2>
+          <div class="fill-box">
+            <div class="fill-sentence">
+              2,7 
+              <span class="math-fraction" style="font-size: 1rem;">
+                <span class="num">g</span>
+                <span class="den">cm³</span>
+              </span> 
+              = <input type="text" class="fill-input" id="fill-input-22" placeholder="Resultado" autocomplete="off"> kg/m³
+            </div>
+            <button class="fill-btn" onclick="checkFill(22, ['2700', '2.700'], 'Pista: Para pasar de g/cm³ a kg/m³ se multiplica por 1.000. Multiplica 2,7 · 1.000.')">Comprobar</button>
+          </div>
+          <div class="quiz-feedback" id="fb-22"></div>
+        </div>
+
+        <!-- PASO 23 -->
+        <div class="slide" id="slide-23" 
+             data-avatar="alegre.jpg"
+             data-speech="La densidad del agua de mar es 1030 kg/m³. ¿A cuántos g/cm³ equivale?">
+          <span class="slide-badge">Ejercicio 5.4</span>
+          <div class="quiz-question">Convierte 1030 kg/m³ a g/cm³:</div>
+          <div class="quiz-options">
+            <button class="quiz-opt-btn" data-correct="false" data-feedback="Incorrecto: Recuerda dividir entre 1000, no entre 100.">A) 10,3 g/cm³</button>
+            <button class="quiz-opt-btn" data-correct="true" data-feedback="¡Exacto! 1030 / 1000 = 1,03 g/cm³.">B) 1,03 g/cm³</button>
+            <button class="quiz-opt-btn" data-correct="false" data-feedback="Eso sería si multiplicaras.">C) 103 g/cm³</button>
+          </div>
+          <div class="quiz-feedback" id="fb-23"></div>
+        </div>
+
+        <!-- ================= RETO FINAL: 20 EJERCICIOS CON 3 INTENTOS ================= -->
+        <!-- PASO 24 -->
+        <div class="slide" id="slide-24" 
+             data-avatar="consejo 2.png"
+             data-speech="¡El gran Reto Final de 20 ejercicios! Tienes 3 intentos por cada ejercicio. Si fallas los 3, el sistema te mostrará la solución exacta.">
+          <span class="slide-badge" style="background:#0f2744; color:#fef3c7;">Evaluación Global</span>
+          <h2 class="slide-title">Reto Final: 20 Ejercicios (3 Intentos por apartado)</h2>
+          <p style="font-size:0.82rem; color:#64748b; margin-bottom:8px;">Introduce el valor numérico en cada casilla y pulsa "Verificar":</p>
+          
+          <div class="final-grid">
+            <div class="final-card" data-ans="1.25|1,25" data-sol="1,25 km" data-hint="Divide entre 1.000 (sube 3 escalones lineales)">
+              <span>1. 1250 m a km</span>
+              <input type="text" placeholder="Resultado">
+              <div class="card-meta">
+                <span class="attempts-badge">Intentos: 3/3</span>
+                <button type="button" class="btn-verify-item" onclick="verifyCard(this)">Verificar</button>
+              </div>
+              <div class="card-feedback"></div>
+            </div>
+            <div class="final-card" data-ans="0.45|0,45" data-sol="0,45 g" data-hint="Divide entre 1.000 (de mg a g)">
+              <span>2. 450 mg a g</span>
+              <input type="text" placeholder="Resultado">
+              <div class="card-meta">
+                <span class="attempts-badge">Intentos: 3/3</span>
+                <button type="button" class="btn-verify-item" onclick="verifyCard(this)">Verificar</button>
+              </div>
+              <div class="card-feedback"></div>
+            </div>
+            <div class="final-card" data-ans="7200" data-sol="7200 s" data-hint="1 h = 3600 s. Multiplica 2 · 3600">
+              <span>3. 2 h a s</span>
+              <input type="text" placeholder="Resultado">
+              <div class="card-meta">
+                <span class="attempts-badge">Intentos: 3/3</span>
+                <button type="button" class="btn-verify-item" onclick="verifyCard(this)">Verificar</button>
+              </div>
+              <div class="card-feedback"></div>
+            </div>
+            <div class="final-card" data-ans="3500" data-sol="3500 m" data-hint="Multiplica por 1.000 (baja 3 escalones)">
+              <span>4. 3,5 km a m</span>
+              <input type="text" placeholder="Resultado">
+              <div class="card-meta">
+                <span class="attempts-badge">Intentos: 3/3</span>
+                <button type="button" class="btn-verify-item" onclick="verifyCard(this)">Verificar</button>
+              </div>
+              <div class="card-feedback"></div>
+            </div>
+            <div class="final-card" data-ans="15" data-sol="15 L" data-hint="Recuerda la pista: 1 dm³ = 1 Litro">
+              <span>5. 15 dm³ a L</span>
+              <input type="text" placeholder="Resultado">
+              <div class="card-meta">
+                <span class="attempts-badge">Intentos: 3/3</span>
+                <button type="button" class="btn-verify-item" onclick="verifyCard(this)">Verificar</button>
+              </div>
+              <div class="card-feedback"></div>
+            </div>
+            <div class="final-card" data-ans="8" data-sol="8 kg" data-hint="En agua líquida: 1 Litro = 1 Kilogramo">
+              <span>6. Masa de 8 L de agua (kg)</span>
+              <input type="text" placeholder="Resultado">
+              <div class="card-meta">
+                <span class="attempts-badge">Intentos: 3/3</span>
+                <button type="button" class="btn-verify-item" onclick="verifyCard(this)">Verificar</button>
+              </div>
+              <div class="card-feedback"></div>
+            </div>
+            <div class="final-card" data-ans="600" data-sol="600 mL" data-hint="Pista clave: 1 cm³ = 1 mL">
+              <span>7. 600 cm³ a mL</span>
+              <input type="text" placeholder="Resultado">
+              <div class="card-meta">
+                <span class="attempts-badge">Intentos: 3/3</span>
+                <button type="button" class="btn-verify-item" onclick="verifyCard(this)">Verificar</button>
+              </div>
+              <div class="card-feedback"></div>
+            </div>
+            <div class="final-card" data-ans="2500" data-sol="2500 L" data-hint="1 m³ = 1000 L. Multiplica 2,5 · 1000">
+              <span>8. 2,5 m³ a L</span>
+              <input type="text" placeholder="Resultado">
+              <div class="card-meta">
+                <span class="attempts-badge">Intentos: 3/3</span>
+                <button type="button" class="btn-verify-item" onclick="verifyCard(this)">Verificar</button>
+              </div>
+              <div class="card-feedback"></div>
+            </div>
+            <div class="final-card" data-ans="20000|20.000" data-sol="20.000 cm²" data-hint="Baja 2 escalones al cuadrado: multiplica por 10.000">
+              <span>9. 2 m² a cm²</span>
+              <input type="text" placeholder="Resultado">
+              <div class="card-meta">
+                <span class="attempts-badge">Intentos: 3/3</span>
+                <button type="button" class="btn-verify-item" onclick="verifyCard(this)">Verificar</button>
+              </div>
+              <div class="card-feedback"></div>
+            </div>
+            <div class="final-card" data-ans="0.07|0,07" data-sol="0,07 m²" data-hint="Sube 2 escalones al cuadrado: divide entre 10.000">
+              <span>10. 700 cm² a m²</span>
+              <input type="text" placeholder="Resultado">
+              <div class="card-meta">
+                <span class="attempts-badge">Intentos: 3/3</span>
+                <button type="button" class="btn-verify-item" onclick="verifyCard(this)">Verificar</button>
+              </div>
+              <div class="card-feedback"></div>
+            </div>
+            <div class="final-card" data-ans="0.45|0,45" data-sol="0,45 dm²" data-hint="De mm² a dm² subes 2 escalones al cuadrado: divide entre 10.000">
+              <span>11. 4500 mm² a dm²</span>
+              <input type="text" placeholder="Resultado">
+              <div class="card-meta">
+                <span class="attempts-badge">Intentos: 3/3</span>
+                <button type="button" class="btn-verify-item" onclick="verifyCard(this)">Verificar</button>
+              </div>
+              <div class="card-feedback"></div>
+            </div>
+            <div class="final-card" data-ans="3000000|3.000.000|3·10⁶" data-sol="3.000.000 m²" data-hint="Baja 3 escalones al cuadrado: multiplica por 1.000.000">
+              <span>12. 3 km² a m²</span>
+              <input type="text" placeholder="Resultado">
+              <div class="card-meta">
+                <span class="attempts-badge">Intentos: 3/3</span>
+                <button type="button" class="btn-verify-item" onclick="verifyCard(this)">Verificar</button>
+              </div>
+              <div class="card-feedback"></div>
+            </div>
+            <div class="final-card" data-ans="80" data-sol="80 L" data-hint="0,08 m³ = 0,08 · 1000 dm³ = 80 L">
+              <span>13. 0,08 m³ a L</span>
+              <input type="text" placeholder="Resultado">
+              <div class="card-meta">
+                <span class="attempts-badge">Intentos: 3/3</span>
+                <button type="button" class="btn-verify-item" onclick="verifyCard(this)">Verificar</button>
+              </div>
+              <div class="card-feedback"></div>
+            </div>
+            <div class="final-card" data-ans="4000" data-sol="4000 cm³" data-hint="Baja 1 escalón al cubo: multiplica por 1.000">
+              <span>14. 4 dm³ a cm³</span>
+              <input type="text" placeholder="Resultado">
+              <div class="card-meta">
+                <span class="attempts-badge">Intentos: 3/3</span>
+                <button type="button" class="btn-verify-item" onclick="verifyCard(this)">Verificar</button>
+              </div>
+              <div class="card-feedback"></div>
+            </div>
+            <div class="final-card" data-ans="0.75|0,75" data-sol="0,75 L" data-hint="750 cm³ = 750 mL. Divide entre 1.000 para pasar a L">
+              <span>15. 750 cm³ a L</span>
+              <input type="text" placeholder="Resultado">
+              <div class="card-meta">
+                <span class="attempts-badge">Intentos: 3/3</span>
+                <button type="button" class="btn-verify-item" onclick="verifyCard(this)">Verificar</button>
+              </div>
+              <div class="card-feedback"></div>
+            </div>
+            <div class="final-card" data-ans="5000" data-sol="5000 mL" data-hint="0,005 m³ = 5 L = 5000 mL">
+              <span>16. 0,005 m³ a mL</span>
+              <input type="text" placeholder="Resultado">
+              <div class="card-meta">
+                <span class="attempts-badge">Intentos: 3/3</span>
+                <button type="button" class="btn-verify-item" onclick="verifyCard(this)">Verificar</button>
+              </div>
+              <div class="card-feedback"></div>
+            </div>
+            <div class="final-card" data-ans="10" data-sol="10 m/s" data-hint="(36 · 1000) / 3600 = 10">
+              <span>17. 36 km/h a m/s</span>
+              <input type="text" placeholder="Resultado">
+              <div class="card-meta">
+                <span class="attempts-badge">Intentos: 3/3</span>
+                <button type="button" class="btn-verify-item" onclick="verifyCard(this)">Verificar</button>
+              </div>
+              <div class="card-feedback"></div>
+            </div>
+            <div class="final-card" data-ans="54" data-sol="54 km/h" data-hint="(15 · 3600) / 1000 = 54">
+              <span>18. 15 m/s a km/h</span>
+              <input type="text" placeholder="Resultado">
+              <div class="card-meta">
+                <span class="attempts-badge">Intentos: 3/3</span>
+                <button type="button" class="btn-verify-item" onclick="verifyCard(this)">Verificar</button>
+              </div>
+              <div class="card-feedback"></div>
+            </div>
+            <div class="final-card" data-ans="8900|8.900" data-sol="8900 kg/m³" data-hint="Multiplica por 1.000 para pasar a kg/m³">
+              <span>19. 8,9 g/cm³ a kg/m³</span>
+              <input type="text" placeholder="Resultado">
+              <div class="card-meta">
+                <span class="attempts-badge">Intentos: 3/3</span>
+                <button type="button" class="btn-verify-item" onclick="verifyCard(this)">Verificar</button>
+              </div>
+              <div class="card-feedback"></div>
+            </div>
+            <div class="final-card" data-ans="0.8|0,8" data-sol="0,8 g/cm³" data-hint="Divide entre 1.000: 800 / 1000">
+              <span>20. 800 kg/m³ a g/cm³</span>
+              <input type="text" placeholder="Resultado">
+              <div class="card-meta">
+                <span class="attempts-badge">Intentos: 3/3</span>
+                <button type="button" class="btn-verify-item" onclick="verifyCard(this)">Verificar</button>
+              </div>
+              <div class="card-feedback"></div>
+            </div>
+          </div>
+
+          <div style="text-align:center; margin-top:10px;">
+            <button class="fill-btn" style="background:#d4af37; color:#0f2744; font-size:1.05rem; padding:10px 22px;" onclick="finishFinalExam()">
+              🏆 Finalizar Examen y Ver Diploma
+            </button>
+          </div>
+          <div class="quiz-feedback" id="fb-final" style="justify-content:center;"></div>
+        </div>
+
+        <!-- PASO 25: Diploma -->
+        <div class="slide" id="slide-25" 
+             data-avatar="alegre.jpg"
+             data-speech="¡Enhorabuena! Has completado con éxito la Masterclass interactiva de Factores de Conversión de Wisdom Corner Academy.">
+          <span class="slide-badge" style="background:#10b981; color:white;">¡Completado con éxito!</span>
+          <div style="text-align:center; padding: 1.6rem; border: 8px double var(--accent); border-radius: 14px; background:#fff;">
+            <img src="Logo.png" alt="Logo" style="height:65px; margin-bottom:8px;">
+            <h2 style="color:var(--primary); font-size: 1.5rem; margin-bottom: 0.3rem;">WISDOM CORNER ACADEMY</h2>
+            <p style="color:var(--accent); font-weight: bold; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;">Certificado de Aprovechamiento</p>
+            <div style="margin: 1.2rem 0;">
+              <p style="font-size:0.85rem; color:#64748b;">Acreditado con éxito a:</p>
+              <h3 style="font-size: 1.4rem; color: #0f2744; margin-top: 4px;">Estudiante de Física y Química</h3>
+            </div>
+            <div style="background:#0f2744; color:white; padding: 10px; border-radius: 8px; display:inline-block; min-width: 190px;">
+              <span style="font-size:0.75rem; color:#d4af37; text-transform:uppercase;">Puntuación Reto Final</span><br>
+              <strong id="finalScoreDiploma" style="font-size: 1.6rem;">0 / 20</strong>
+            </div>
+            <p style="font-size: 0.9rem; color: #10b981; font-weight: bold; margin-top: 1.1rem;">
+              ✓ Dominio completo de factores de conversión simples, de superficie, volumen y compuestos.
+            </p>
+          </div>
+        </div>
+
+      </section>
+    </main>
+
+    <!-- Barra de Navegación Inferior -->
+    <footer class="bottom-bar">
+      <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>Anterior</button>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Siguiente</button>
+    </footer>
+
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 25;
+    let focusedInput = null;
+
+    document.addEventListener('focusin', (e) => {
+      if (e.target.tagName === 'INPUT') {
+        focusedInput = e.target;
+      }
+    });
+
+    function addChar(char) {
+      if (!focusedInput) {
+        const activeSlide = document.querySelector('.slide.active');
+        focusedInput = activeSlide ? activeSlide.querySelector('input') : null;
+      }
+      if (focusedInput) {
+        focusedInput.focus();
+        const start = focusedInput.selectionStart || focusedInput.value.length;
+        const end = focusedInput.selectionEnd || focusedInput.value.length;
+        const val = focusedInput.value;
+        focusedInput.value = val.substring(0, start) + char + val.substring(end);
+        focusedInput.selectionStart = focusedInput.selectionEnd = start + char.length;
+      }
+    }
+
+    function changeSlide(direction) {
+      const nextSlide = currentSlide + direction;
+      if (nextSlide < 1 || nextSlide > totalSlides) return;
+
+      document.getElementById(`slide-${currentSlide}`).classList.remove('active');
+      currentSlide = nextSlide;
+      const target = document.getElementById(`slide-${currentSlide}`);
+      target.classList.add('active');
+
+      const avatarSrc = target.getAttribute('data-avatar');
+      const newSpeech = target.getAttribute('data-speech');
+      if (avatarSrc) {
+        document.getElementById('teacherAvatar').src = avatarSrc;
+      }
+      if (newSpeech) {
+        document.getElementById('teacherVoice').textContent = newSpeech;
+      }
+
+      document.getElementById('stepBadge').textContent = `Paso ${currentSlide} / ${totalSlides}`;
+      document.getElementById('prevBtn').disabled = (currentSlide === 1);
+      document.getElementById('nextBtn').disabled = (currentSlide === totalSlides);
+
+      const percent = Math.round((currentSlide / totalSlides) * 100);
+      document.getElementById('progressFill').style.width = `${percent}%`;
+
+      if (currentSlide === 25) {
+        confetti({ particleCount: 110, spread: 80, origin: { y: 0.6 } });
+      }
+    }
+
+    // Quizzes
+    document.querySelectorAll('.quiz-opt-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const parent = this.closest('.slide');
+        const feedback = parent.querySelector('.quiz-feedback');
+        const isCorrect = this.getAttribute('data-correct') === 'true';
+        const msg = this.getAttribute('data-feedback');
+
+        parent.querySelectorAll('.quiz-opt-btn').forEach(b => {
+          b.disabled = true;
+          if (b.getAttribute('data-correct') === 'true') {
+            b.classList.add('correct');
+          }
+        });
+
+        if (isCorrect) {
+          this.classList.add('correct');
+          feedback.style.color = '#065f46';
+          feedback.textContent = '✓ ' + msg;
+          document.getElementById('teacherAvatar').src = 'alegre.jpg';
+          confetti({ particleCount: 25, spread: 50 });
+        } else {
+          this.classList.add('wrong');
+          feedback.style.color = '#991b1b';
+          feedback.textContent = '✗ ' + msg;
+          document.getElementById('teacherAvatar').src = 'triste.jpg';
+        }
+      });
+    });
+
+    // Comprobación de ejercicios guiados
+    function checkFill(slideNum, validAnswers, hintText) {
+      const input = document.getElementById(`fill-input-${slideNum}`);
+      const feedback = document.getElementById(`fb-${slideNum}`);
+      const userVal = input.value.trim().toLowerCase().replace(/\s+/g, '');
+
+      if (!userVal) {
+        feedback.style.color = '#92400e';
+        feedback.textContent = '⚠️ Escribe un número antes de comprobar.';
+        return;
+      }
+
+      const isMatch = validAnswers.some(ans => ans.toLowerCase() === userVal);
+
+      if (isMatch) {
+        feedback.style.color = '#065f46';
+        feedback.textContent = '✓ ¡Correcto! Muy bien calculado.';
+        input.style.borderColor = '#10b981';
+        document.getElementById('teacherAvatar').src = 'alegre.jpg';
+        confetti({ particleCount: 25, spread: 50 });
+      } else {
+        feedback.style.color = '#991b1b';
+        feedback.innerHTML = `✗ Incorrecto. <br><span style="color:#b45309; font-weight:normal;">💡 ${hintText || 'Revisa la escalera y vuelve a intentarlo.'}</span>`;
+        input.style.borderColor = '#ef4444';
+        document.getElementById('teacherAvatar').src = 'pensativo.png';
+      }
+    }
+
+    // Emparejar
+    let selectedItem = null;
+    document.querySelectorAll('.match-grid').forEach(grid => {
+      grid.addEventListener('click', (e) => {
+        const item = e.target.closest('.match-item');
+        if (!item || item.classList.contains('matched')) return;
+
+        if (!selectedItem) {
+          selectedItem = item;
+          item.classList.add('selected');
+        } else {
+          if (selectedItem === item) {
+            item.classList.remove('selected');
+            selectedItem = null;
+            return;
+          }
+
+          const pair1 = selectedItem.getAttribute('data-pair');
+          const pair2 = item.getAttribute('data-pair');
+
+          if (pair1 === pair2) {
+            selectedItem.classList.remove('selected');
+            selectedItem.classList.add('matched');
+            item.classList.add('matched');
+            selectedItem = null;
+
+            const remaining = grid.querySelectorAll('.match-item:not(.matched)');
+            if (remaining.length === 0) {
+              const fb = grid.parentElement.querySelector('.quiz-feedback');
+              if (fb) {
+                fb.style.color = '#065f46';
+                fb.textContent = '✓ ¡Excelente! Todas las parejas son correctas.';
+              }
+              document.getElementById('teacherAvatar').src = 'alegre.jpg';
+              confetti({ particleCount: 30, spread: 60 });
+            }
+          } else {
+            selectedItem.classList.remove('selected');
+            selectedItem = null;
+            document.getElementById('teacherAvatar').src = 'pensativo.png';
+          }
+        }
+      });
+    });
+
+    // SISTEMA DE 3 INTENTOS EN EL RETO FINAL
+    function verifyCard(btn) {
+      const card = btn.closest('.final-card');
+      const input = card.querySelector('input');
+      const val = input.value.trim().toLowerCase().replace(/\s+/g, '');
+      const validAnswers = card.getAttribute('data-ans').split('|').map(s => s.trim().toLowerCase());
+      const exactSolution = card.getAttribute('data-sol');
+      const hint = card.getAttribute('data-hint');
+      const fb = card.querySelector('.card-feedback');
+      const badge = card.querySelector('.attempts-badge');
+
+      let attempts = parseInt(card.dataset.attempts || '3');
+
+      if (!val) {
+        fb.style.color = '#b45309';
+        fb.textContent = 'Escribe un resultado.';
+        return;
+      }
+
+      const isOk = validAnswers.includes(val);
+
+      if (isOk) {
+        card.classList.remove('ko');
+        card.classList.add('ok');
+        card.dataset.resolved = 'correct';
+        input.disabled = true;
+        btn.disabled = true;
+        btn.textContent = 'Acertado';
+        btn.style.background = '#10b981';
+        badge.textContent = '¡Correcto!';
+        badge.style.background = '#bbf7d0';
+        fb.style.color = '#065f46';
+        fb.textContent = '✓ ¡Respuesta exacta!';
+        document.getElementById('teacherAvatar').src = 'alegre.jpg';
+        confetti({ particleCount: 15, spread: 45 });
+      } else {
+        attempts--;
+        card.dataset.attempts = attempts;
+
+        if (attempts > 0) {
+          badge.textContent = `Intentos: ${attempts}/3`;
+          card.classList.add('ko');
+          fb.style.color = '#991b1b';
+          fb.innerHTML = `✗ Fallo (${attempts} restante${attempts > 1 ? 's' : ''}).<br><span style="color:#92400e; font-weight:normal;">💡 ${hint}</span>`;
+          document.getElementById('teacherAvatar').src = 'pensativo.png';
+        } else {
+          badge.textContent = 'Agotado (0/3)';
+          badge.style.background = '#fecaca';
+          card.classList.remove('ok');
+          card.classList.add('ko');
+          card.dataset.resolved = 'failed';
+          input.disabled = true;
+          btn.disabled = true;
+          btn.textContent = 'Solución';
+          btn.style.background = '#ef4444';
+          fb.style.color = '#991b1b';
+          fb.innerHTML = `❌ Solución correcta: <strong>${exactSolution}</strong>`;
+          document.getElementById('teacherAvatar').src = 'triste.jpg';
+        }
+      }
+    }
+
+    // Finalizar examen y emitir diploma
+    function finishFinalExam() {
+      const cards = document.querySelectorAll('.final-card');
+      let correctCount = 0;
+      let unanswered = 0;
+
+      cards.forEach(card => {
+        if (card.dataset.resolved === 'correct') {
+          correctCount++;
+        } else if (!card.dataset.resolved) {
+          unanswered++;
+        }
+      });
+
+      const fb = document.getElementById('fb-final');
+      if (unanswered > 0) {
+        fb.style.color = '#b45309';
+        fb.textContent = `Te quedan ${unanswered} apartado(s) por responder o verificar antes de ver tu diploma.`;
+        document.getElementById('teacherAvatar').src = 'estresado.png';
+        return;
+      }
+
+      document.getElementById('finalScoreDiploma').textContent = `${correctCount} / 20`;
+      changeSlide(1);
+    }
+  </script>
+</body>
+</html>
