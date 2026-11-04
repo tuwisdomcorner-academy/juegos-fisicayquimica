@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Práctica | Wisdom Corner Academy</title>
+    <style>
+        :root {
+            --navy: #0B2046;
+            --gold: #C5A559;
+            --light-gold: #f5eedc;
+            --bg: #F8F9FA;
+            --text: #333;
+            --green: #28a745;
+            --red: #dc3545;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding-bottom: 50px; }
+        
+        /* HEADER */
+        header { background-color: var(--navy); color: white; padding: 20px; text-align: center; border-bottom: 5px solid var(--gold); }
+        header img.logo { height: 80px; margin-bottom: 10px; }
+        header h1 { font-size: 24px; text-transform: uppercase; letter-spacing: 2px; }
+        
+        /* NAVIGATION */
+        nav { display: flex; justify-content: center; gap: 15px; margin: 30px 0; padding: 0 20px; flex-wrap: wrap; }
+        nav button { background-color: white; color: var(--navy); border: 2px solid var(--navy); padding: 12px 25px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        nav button:hover, nav button.active { background-color: var(--navy); color: white; border-color: var(--gold); }
+        
+        /* MODULE CONTAINERS */
+        .module { display: none; max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--gold); }
+        .module.active { display: block; }
+        .module-title { color: var(--navy); font-size: 22px; margin-bottom: 20px; border-bottom: 2px solid var(--light-gold); padding-bottom: 10px; display: flex; align-items: center; gap: 15px; }
+        .module-title img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold); }
+
+        /* FLASHCARDS */
+        .flashcard-container { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .card-scene { width: 100%; max-width: 500px; height: 300px; perspective: 1000px; }
+        .card { width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; position: relative; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; border-radius: 15px; text-align: center; font-size: 1.2em; box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+        .card-front { background-color: var(--light-gold); color: var(--navy); border: 3px solid var(--gold); }
+        .card-back { background-color: var(--navy); color: white; transform: rotateY(180deg); border: 3px solid var(--gold); }
+        .controls { display: flex; gap: 15px; align-items: center; }
+        .controls button { background-color: var(--gold); color: var(--navy); border: none; padding: 10px 20px; font-weight: bold; border-radius: 5px; cursor: pointer; }
+        .controls button:hover { background-color: #b08d40; }
+        .counter { font-weight: bold; color: var(--navy); }
+
+        /* TEST */
+        .question-block { margin-bottom: 25px; padding: 15px; border-radius: 8px; background-color: #fcfcfc; border: 1px solid #ddd; }
+        .question-block h4 { color: var(--navy); margin-bottom: 10px; }
+        .options { display: flex; flex-direction: column; gap: 8px; }
+        .options label { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 5px; background: white; border: 1px solid #ccc; cursor: pointer; transition: 0.2s; }
+        .options label:hover { background: #f0f0f0; }
+        .options input[type="radio"] { accent-color: var(--navy); transform: scale(1.2); }
+        .correct-opt { background-color: #d4edda !important; border-color: var(--green) !important; color: #155724; font-weight: bold; }
+        .incorrect-opt { background-color: #f8d7da !important; border-color: var(--red) !important; color: #721c24; text-decoration: line-through; }
+        .btn-submit { background-color: var(--navy); color: white; border: none; padding: 12px 30px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; display: block; margin: 20px auto; }
+        .btn-submit:hover { background-color: var(--gold); color: var(--navy); }
+        #test-result { text-align: center; margin-top: 20px; display: none; padding: 20px; border-radius: 10px; background: var(--light-gold); border: 2px solid var(--gold); }
+        #test-result img { width: 120px; height: 120px; border-radius: 50%; margin-bottom: 15px; border: 3px solid var(--navy); }
+
+        /* OPEN QUESTIONS */
+        .open-block { margin-bottom: 30px; }
+        .open-block label { font-weight: bold; color: var(--navy); display: block; margin-bottom: 10px; font-size: 1.1em; }
+        .open-block textarea { width: 100%; height: 80px; padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 1em; resize: vertical; font-family: inherit; }
+        .open-block textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 5px rgba(197, 165, 89, 0.5); }
+        .btn-show { background-color: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-top: 10px; font-size: 0.9em; }
+        .solution-box { margin-top: 10px; padding: 15px; background-color: #e2f0d9; border-left: 5px solid var(--green); display: none; border-radius: 0 8px 8px 0; color: #1e5c26; }
+
+        /* DIAGRAM (Q10) */
+        .diagram-wrapper { margin-top: 40px; padding: 20px; background: white; border: 2px solid var(--navy); border-radius: 10px; overflow-x: auto; }
+        .diagram { position: relative; width: 750px; height: 350px; margin: 0 auto; background: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="%23f0f0f0" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>'); border-radius: 8px; border: 1px solid #eee; }
+        
+        .state-box { position: absolute; padding: 15px; border: 3px solid var(--navy); background: white; border-radius: 10px; font-weight: bold; text-align: center; width: 140px; color: var(--navy); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        #s-solido { top: 140px; left: 30px; border-color: #4a90e2; }
+        #s-liquido { top: 140px; left: 300px; border-color: #3b5998; }
+        #s-gas { top: 140px; left: 570px; border-color: #9b59b6; }
+        .state-box small { display: block; font-weight: normal; color: #666; font-size: 0.8em; margin-top: 5px; }
+
+        .diagram select { position: absolute; padding: 5px; font-size: 0.9em; border: 2px solid var(--gold); border-radius: 5px; background: var(--light-gold); font-weight: bold; color: var(--navy); outline: none; cursor: pointer; }
+        .diagram select.correct { border-color: var(--green); background-color: #d4edda; color: #155724; }
+        .diagram select.error { border-color: var(--red); background-color: #f8d7da; color: #721c24; }
+        
+        /* Select positions */
+        #sel-fusion { top: 110px; left: 180px; width: 110px; }
+        #sel-solidi { top: 195px; left: 180px; width: 110px; }
+        #sel-vapori { top: 110px; left: 450px; width: 110px; }
+        #sel-conden { top: 195px; left: 450px; width: 110px; }
+        #sel-sublim { top: 40px; left: 250px; width: 250px; text-align: center; }
+        #sel-subinv { top: 270px; left: 250px; width: 250px; text-align: center; }
+
+        .arrow-line { position: absolute; font-weight: bold; color: var(--navy); font-size: 20px; }
+        /* Arrows approximation */
+        .ar-fus { top: 110px; left: 172px; } .ar-fus::after { content: "→"; margin-left: 115px; }
+        .ar-sol { top: 195px; left: 160px; } .ar-sol::after { content: "←"; margin-right: 115px; }
+        .ar-vap { top: 110px; left: 442px; } .ar-vap::after { content: "→"; margin-left: 115px; }
+        .ar-con { top: 195px; left: 430px; } .ar-con::after { content: "←"; margin-right: 115px; }
+
+        .footer-note { text-align: center; margin-top: 40px; color: #777; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="Logo.png" alt="Wisdom Corner Academy Logo" class="logo" onerror="this.src='https://via.placeholder.com/150x80?text=WISDOM+CORNER'">
+        <h1>Plataforma de Repaso: La Materia</h1>
+        <p>Estados de Agregación y Teoría Cinético-Molecular</p>
+    </header>
+
+    <nav>
+        <button id="btn-mod1" class="active" onclick="showModule(1)">Módulo 1: Flashcards</button>
+        <button id="btn-mod2" onclick="showModule(2)">Módulo 2: Test</button>
+        <button id="btn-mod3" onclick="showModule(3)">Módulo 3: Desarrollo y Esquema</button>
+    </nav>
+
+    <!-- MODULE 1: FLASHCARDS -->
+    <section id="mod1" class="module active">
+        <div class="module-title">
+            <img src="consejo.png" alt="Profesor" onerror="this.src='https://via.placeholder.com/50'">
+            <h2>Tarjetas de Memorización Rápida</h2>
+        </div>
+        <p style="text-align: center; margin-bottom: 20px; color: #555;">Haz clic en la tarjeta para ver la respuesta. Úsalas para repasar los conceptos clave antes del test.</p>
+        
+        <div class="flashcard-container">
+            <div class="card-scene">
+                <div class="card" id="flashcard" onclick="flipCard()">
+                    <div class="card-face card-front" id="card-q">Pregunta</div>
+                    <div class="card-face card-back" id="card-a">Respuesta</div>
+                </div>
+            </div>
+            <div class="controls">
+                <button onclick="prevCard()">&#8592; Anterior</button>
+                <span class="counter"><span id="card-current">1</span> / 25</span>
+                <button onclick="nextCard()">Siguiente &#8594;</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODULE 2: TEST -->
+    <section id="mod2" class="module">
+        <div class="module-title">
+            <img src="pensativo.png" alt="Profesor" onerror="this.src='https://via.placeholder.com/50'">
+            <h2>Test de Evaluación Múltiple</h2>
+        </div>
+        <p style="margin-bottom: 20px;">Selecciona la respuesta correcta para cada pregunta y pulsa en "Corregir Test" al final.</p>
+        
+        <div id="test-container"></div>
+        
+        <button class="btn-submit" onclick="gradeTest()">Corregir Test</button>
+        
+        <div id="test-result">
+            <img id="result-img" src="" alt="Resultado">
+            <h3 id="result-score" style="color: var(--navy); font-size: 24px; margin-bottom: 10px;"></h3>
+            <p id="result-msg" style="font-weight: bold;"></p>
+        </div>
+    </section>
+
+    <!-- MODULE 3: DESARROLLO Y ESQUEMA -->
+    <section id="mod3" class="module">
+        <div class="module-title">
+            <img src="secreto.jpg" alt="Profesor" onerror="this.src='https://via.placeholder.com/50'">
+            <h2>Preguntas de Desarrollo y Esquema Visual</h2>
+        </div>
+        <p style="margin-bottom: 25px; color: #555;">Redacta tus respuestas apoyándote en la Teoría Cinético-Molecular. Después, comprueba si has acertado.</p>
+
+        <div id="open-container"></div>
+
+        <div class="diagram-wrapper">
+            <h3 style="color: var(--navy); margin-bottom: 15px;">Pregunta 10: Completa el Esquema de los Cambios de Estado</h3>
+            <p style="margin-bottom: 20px;">Selecciona el nombre correcto del cambio de estado en cada hueco.</p>
+            
+            <div class="diagram">
+                <!-- Cajas de estado -->
+                <div class="state-box" id="s-solido">SÓLIDO <small>(Ej. Hielo)</small></div>
+                <div class="state-box" id="s-liquido">LÍQUIDO <small>(Ej. Agua)</small></div>
+                <div class="state-box" id="s-gas">GASEOSO <small>(Ej. Vapor)</small></div>
+                
+                <!-- Flechas (Visuales básicas) -->
+                <div class="arrow-line ar-fus"></div>
+                <div class="arrow-line ar-sol"></div>
+                <div class="arrow-line ar-vap"></div>
+                <div class="arrow-line ar-con"></div>
+
+                <!-- Selects -->
+                <select id="sel-fusion" class="diag-select">
+                    <option value="">-- Elige --</option>
+                    <option value="Fusion">Fusión</option>
+                    <option value="Vaporizacion">Vaporización</option>
+                    <option value="Condensacion">Condensación</option>
+                    <option value="Solidificacion">Solidificación</option>
+                    <option value="Sublimacion">Sublimación</option>
+                    <option value="Sublimacion Inversa">Sublimación Inversa</option>
+                </select>
+
+                <select id="sel-solidi" class="diag-select">
+                    <option value="">-- Elige --</option>
+                    <option value="Fusion">Fusión</option>
+                    <option value="Vaporizacion">Vaporización</option>
+                    <option value="Condensacion">Condensación</option>
+                    <option value="Solidificacion">Solidificación</option>
+                    <option value="Sublimacion">Sublimación</option>
+                    <option value="Sublimacion Inversa">Sublimación Inversa</option>
+                </select>
+
+                <select id="sel-vapori" class="diag-select">
+                    <option value="">-- Elige --</option>
+                    <option value="Fusion">Fusión</option>
+                    <option value="Vaporizacion">Vaporización</option>
+                    <option value="Condensacion">Condensación</option>
+                    <option value="Solidificacion">Solidificación</option>
+                    <option value="Sublimacion">Sublimación</option>
+                    <option value="Sublimacion Inversa">Sublimación Inversa</option>
+                </select>
+
+                <select id="sel-conden" class="diag-select">
+                    <option value="">-- Elige --</option>
+                    <option value="Fusion">Fusión</option>
+                    <option value="Vaporizacion">Vaporización</option>
+                    <option value="Condensacion">Condensación</option>
+                    <option value="Solidificacion">Solidificación</option>
+                    <option value="Sublimacion">Sublimación</option>
+                    <option value="Sublimacion Inversa">Sublimación Inversa</option>
+                </select>
+
+                <select id="sel-sublim" class="diag-select">
+                    <option value="">-- Cambio Directo (Sólido → Gas) --</option>
+                    <option value="Fusion">Fusión</option>
+                    <option value="Vaporizacion">Vaporización</option>
+                    <option value="Condensacion">Condensación</option>
+                    <option value="Solidificacion">Solidificación</option>
+                    <option value="Sublimacion">Sublimación</option>
+                    <option value="Sublimacion Inversa">Sublimación Inversa</option>
+                </select>
+
+                <select id="sel-subinv" class="diag-select">
+                    <option value="">-- Cambio Directo (Gas → Sólido) --</option>
+                    <option value="Fusion">Fusión</option>
+                    <option value="Vaporizacion">Vaporización</option>
+                    <option value="Condensacion">Condensación</option>
+                    <option value="Solidificacion">Solidificación</option>
+                    <option value="Sublimacion">Sublimación</option>
+                    <option value="Sublimacion Inversa">Sublimación Inversa</option>
+                </select>
+            </div>
+            <button class="btn-submit" onclick="gradeDiagram()">Corregir Esquema</button>
+        </div>
+    </section>
+
+    <div class="footer-note">
+        <p>&copy; 2026 Wisdom Corner Academy. Todos los derechos reservados.</p>
+    </div>
+
+    <script>
+        // NAVIGATION LOGIC
+        function showModule(n) {
+            document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById('mod' + n).classList.add('active');
+            document.getElementById('btn-mod' + n).classList.add('active');
+        }
+
+        // DATA: FLASHCARDS (25 Questions)
+        const flashcards = [
+            { q: "¿Qué teoría explica las propiedades de los estados de la materia?", a: "La Teoría Cinético-Molecular (TCM) / El Modelo de Partículas." },
+            { q: "¿Cómo es la forma y el volumen de un sólido?", a: "Tienen forma propia y definida, y un volumen propio." },
+            { q: "¿Los líquidos se pueden comprimir?", a: "Casi nada. Tienen una compresibilidad muy baja (son casi incompresibles)." },
+            { q: "¿Qué estado adopta la forma y el volumen del recipiente?", a: "El estado gaseoso." },
+            { q: "¿Cómo se mueven las partículas en estado sólido?", a: "Están ordenadas y solo vibran en su posición (como alumnos en pupitres)." },
+            { q: "¿Cómo se comportan las partículas en un gas?", a: "Están muy separadas y se mueven muy rápido en todas direcciones al azar." },
+            { q: "¿Cómo se llama el paso de Sólido a Líquido?", a: "Fusión." },
+            { q: "¿Y el cambio de Gas a Líquido?", a: "Condensación." },
+            { q: "¿Qué cambio es el paso directo de Sólido a Gas?", a: "Sublimación." },
+            { q: "¿Qué es el punto de ebullición?", a: "La temperatura exacta a la que una sustancia pasa de líquido a gaseoso en toda su masa." },
+            { q: "¿En qué unidad se mide la presión de los gases?", a: "En atmósferas (atm)." },
+            { q: "¿Qué operación haces para pasar de grados Celsius a Kelvin?", a: "Sumarle 273 (T_Kelvin = T_Celsius + 273)." },
+            { q: "Según la TCM, ¿la materia es continua o discontinua?", a: "Es discontinua, formada por partículas de tamaño ínfimo (átomos/moléculas)." },
+            { q: "¿Las partículas de los gases se atraen o se repelen?", a: "Según el modelo, no se atraen ni se repelen entre sí." },
+            { q: "¿A qué equivale la 'presión' de un gas según la TCM?", a: "A la fuerza de los choques de las partículas contra las paredes del recipiente." },
+            { q: "¿Qué ocurre con las partículas si aumentamos la temperatura?", a: "Ganan energía y se mueven a mayor velocidad." },
+            { q: "¿Pierden energía las partículas del gas al chocar?", a: "No, en estas colisiones no se pierde energía (son choques elásticos)." },
+            { q: "¿Por qué fluyen los líquidos?", a: "Porque sus partículas están desordenadas y se deslizan unas sobre otras." },
+            { q: "Si las paredes de un recipiente son deformables y la presión interior es MENOR, ¿qué ocurre?", a: "El exterior empuja más, el recipiente se deforma, se aplasta y baja su volumen." },
+            { q: "¿Por qué se chafa una botella vacía al meterla en la nevera?", a: "Porque al bajar la temperatura, las partículas chocan menos, baja la presión interior y la presión exterior la aplasta." },
+            { q: "Nombra el cambio de Líquido a Sólido.", a: "Solidificación." },
+            { q: "Nombra el cambio directo de Gas a Sólido.", a: "Sublimación inversa." },
+            { q: "¿Qué temperatura es el 'punto de fusión'?", a: "La temperatura exacta en la que un sólido pasa a líquido." },
+            { q: "¿Cuáles son las 3 variables fundamentales para estudiar gases?", a: "Presión (atm), Volumen (L) y Temperatura (K)." },
+            { q: "Truco de estudio: ¿A qué se parecen las partículas de los gases?", a: "A coches de choque en una pista gigante." }
+        ];
+
+        let currCard = 0;
+        const cardEl = document.getElementById('flashcard');
+        const qEl = document.getElementById('card-q');
+        const aEl = document.getElementById('card-a');
+        const countEl = document.getElementById('card-current');
+
+        function updateCard() {
+            cardEl.classList.remove('is-flipped');
+            setTimeout(() => {
+                qEl.innerText = flashcards[currCard].q;
+                aEl.innerText = flashcards[currCard].a;
+                countEl.innerText = currCard + 1;
+            }, 150); // wait for flip animation half-way
+        }
+        function flipCard() { cardEl.classList.toggle('is-flipped'); }
+        function nextCard() { if (currCard < flashcards.length - 1) { currCard++; updateCard(); } }
+        function prevCard() { if (currCard > 0) { currCard--; updateCard(); } }
+        
+        // Initialize Flashcards
+        updateCard();
+
+        // DATA: TEST (15 Questions for good measure, we'll show 10)
+        const testData = [
+            { q: "1. Según el modelo de partículas, en estado líquido las partículas...", opts: ["Solo vibran ordenadas.", "Están muy separadas y se mueven en todas direcciones.", "Están próximas pero desordenadas y se deslizan unas sobre otras."], ans: 2 },
+            { q: "2. ¿Qué estado de agregación NO fluye y apenas se puede comprimir?", opts: ["Sólido", "Líquido", "Gaseoso"], ans: 0 },
+            { q: "3. El cambio de estado de gas a líquido se denomina:", opts: ["Fusión", "Vaporización", "Condensación"], ans: 2 },
+            { q: "4. En la fórmula de las Leyes de los Gases, la temperatura SIEMPRE debe introducirse en:", opts: ["Grados Celsius (ºC)", "Grados Kelvin (K)", "Atmósferas (atm)"], ans: 1 },
+            { q: "5. ¿Qué establece la Teoría Cinético-Molecular sobre la materia?", opts: ["Que es un bloque continuo sin espacios vacíos.", "Que está formada por entidades discretas que están en constante movimiento.", "Que las partículas de los gases se atraen fuertemente."], ans: 1 },
+            { q: "6. Según la TCM aplicada a gases, la PRESION se explica como...", opts: ["La fuerza de los choques de las partículas contra las paredes.", "El número total de partículas en el gas.", "La velocidad a la que se mueven al calentarse."], ans: 0 },
+            { q: "7. Si pisas el acelerador (aumentas la temperatura) de los 'coches de choque' gaseosos...", opts: ["Van más lento y chocan menos.", "Se juntan y forman un líquido.", "Van más rápido y chocan mucho más fuerte."], ans: 2 },
+            { q: "8. Cuando metemos una botella de plástico vacía en la nevera...", opts: ["Se expande porque la presión interior aumenta.", "Se aplasta porque la presión exterior es mayor que la interior al enfriarse el gas.", "No le ocurre nada porque el plástico aísla la presión."], ans: 1 },
+            { q: "9. ¿Qué le ocurre a la energía de las partículas de un gas cuando chocan entre sí?", opts: ["Se pierde totalmente.", "Se transforman en sólido.", "No se pierde, son choques elásticos."], ans: 2 },
+            { q: "10. ¿Cuál es la temperatura exacta en la que un sólido empieza a pasar a estado líquido?", opts: ["Punto de ebullición.", "Punto de solidificación.", "Punto de fusión."], ans: 2 }
+        ];
+
+        const testContainer = document.getElementById('test-container');
+        testData.forEach((item, index) => {
+            let html = `<div class="question-block" id="qb-${index}"><h4>${item.q}</h4><div class="options">`;
+            item.opts.forEach((opt, oIndex) => {
+                html += `<label id="lbl-${index}-${oIndex}"><input type="radio" name="q${index}" value="${oIndex}"> ${opt}</label>`;
+            });
+            html += `</div></div>`;
+            testContainer.innerHTML += html;
+        });
+
+        function gradeTest() {
+            let score = 0;
+            let answeredAll = true;
+            
+            testData.forEach((item, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                // Limpiar clases previas
+                item.opts.forEach((_, oIndex) => {
+                    document.getElementById(`lbl-${index}-${oIndex}`).classList.remove('correct-opt', 'incorrect-opt');
+                });
+
+                if (!selected) {
+                    answeredAll = false;
+                    return;
+                }
+                
+                const val = parseInt(selected.value);
+                if (val === item.ans) {
+                    score++;
+                    document.getElementById(`lbl-${index}-${val}`).classList.add('correct-opt');
+                } else {
+                    document.getElementById(`lbl-${index}-${val}`).classList.add('incorrect-opt');
+                    document.getElementById(`lbl-${index}-${item.ans}`).classList.add('correct-opt');
+                }
+            });
+
+            if (!answeredAll) {
+                alert("¡Cuidado! Debes responder todas las preguntas antes de corregir.");
+                return;
+            }
+
+            const resDiv = document.getElementById('test-result');
+            const resScore = document.getElementById('result-score');
+            const resMsg = document.getElementById('result-msg');
+            const resImg = document.getElementById('result-img');
+
+            resDiv.style.display = "block";
+            resScore.innerText = `Nota: ${score} / 10`;
+
+            if (score === 10) {
+                resImg.src = "alegre.jpg";
+                resMsg.innerText = "¡Excelente trabajo! Has dominado la teoría por completo.";
+                resMsg.style.color = "var(--green)";
+            } else if (score >= 5) {
+                resImg.src = "pensativo.png";
+                resMsg.innerText = "¡Aprobado! Revisa las que has fallado (marcadas en rojo) para fijar el conocimiento.";
+                resMsg.style.color = "var(--navy)";
+            } else {
+                resImg.src = "estresado.png";
+                resMsg.innerText = "No te preocupes. ¡Vuelve al Módulo 1, repasa las tarjetas e inténtalo de nuevo!";
+                resMsg.style.color = "var(--red)";
+            }
+        }
+
+        // DATA: OPEN QUESTIONS (1-9, Q10 is the diagram)
+        const openQs = [
+            { q: "1. Explica brevemente cómo es la disposición y movimiento de las partículas en el estado sólido.", a: "Las partículas están muy juntas y ordenadas. Tienen un movimiento muy limitado, ya que solo vibran alrededor de su posición fija. Por eso los sólidos tienen forma y volumen definidos." },
+            { q: "2. ¿Por qué los gases son muy compresibles y los sólidos no lo son?", a: "En los gases, las partículas están muy separadas, por lo que hay mucho espacio vacío que permite acercarlas al aplicar presión (se comprimen). En los sólidos, las partículas ya están pegadas y ordenadas, sin espacio para acercarse más." },
+            { q: "3. Define punto de fusión y punto de ebullición.", a: "El punto de fusión es la temperatura exacta a la que una sustancia pasa de estado sólido a líquido. El punto de ebullición es la temperatura exacta a la que pasa de estado líquido a gaseoso en toda su masa." },
+            { q: "4. ¿Cuál es el proceso (la operación matemática) para convertir grados Celsius (ºC) a grados Kelvin (K)? Pon un ejemplo.", a: "Para convertir ºC a K, hay que sumar 273. Ejemplo: 25 ºC + 273 = 298 K." },
+            { q: "5. Menciona las tres variables físicas fundamentales para estudiar el comportamiento de los gases y sus unidades.", a: "Presión (en atmósferas, atm), Volumen (en litros, L) y Temperatura (en grados Kelvin, K)." },
+            { q: "6. Según la TCM, ¿qué provoca la presión de un gas en el interior de un recipiente?", a: "La presión está provocada por los continuos choques de las partículas del gas contra las paredes del recipiente. Cuanto más fuertes y frecuentes sean los choques, mayor es la presión." },
+            { q: "7. Usando la metáfora de los 'coches de choque', explica qué le ocurre a un gas si aumentamos su temperatura.", a: "Al aumentar la temperatura (pisar el acelerador), las partículas ganan energía y se mueven a mayor velocidad. Por tanto, chocarán más veces y más fuerte contra las paredes." },
+            { q: "8. ¿Qué significa la afirmación 'la materia es discontinua'?", a: "Significa que la materia no es un bloque continuo, sino que está formada por entidades microscópicas individuales (átomos o moléculas) separadas por espacio vacío." },
+            { q: "9. ¿Por qué una botella de plástico vacía se 'chafa' al enfriarse en la nevera?", a: "Al enfriar el aire de dentro, las partículas se mueven más despacio y chocan con menos fuerza contra el plástico. La presión interior baja. Como la presión exterior de la nevera es mayor, empuja las paredes de la botella hacia adentro y la chafa." }
+        ];
+
+        const openContainer = document.getElementById('open-container');
+        openQs.forEach((item, index) => {
+            const html = `
+                <div class="open-block">
+                    <label>${item.q}</label>
+                    <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+                    <button class="btn-show" onclick="document.getElementById('sol-${index}').style.display='block'">Ver respuesta esperada</button>
+                    <div class="solution-box" id="sol-${index}"><strong>Solución:</strong> ${item.a}</div>
+                </div>
+            `;
+            openContainer.innerHTML += html;
+        });
+
+        // GRADE DIAGRAM (Q10)
+        function gradeDiagram() {
+            const answers = {
+                'sel-fusion': 'Fusion',
+                'sel-solidi': 'Solidificacion',
+                'sel-vapori': 'Vaporizacion',
+                'sel-conden': 'Condensacion',
+                'sel-sublim': 'Sublimacion',
+                'sel-subinv': 'Sublimacion Inversa'
+            };
+            
+            let allCorrect = true;
+            
+            for (const [id, correctVal] of Object.entries(answers)) {
+                const el = document.getElementById(id);
+                el.classList.remove('correct', 'error');
+                if (el.value === correctVal) {
+                    el.classList.add('correct');
+                } else {
+                    el.classList.add('error');
+                    allCorrect = false;
+                }
+            }
+
+            if(allCorrect) {
+                alert("¡Enhorabuena! El esquema de cambios de estado está perfecto.");
+            } else {
+                alert("Hay algunos fallos (marcados en rojo). Revisa hacia dónde apuntan las flechas imaginarias: de izquierda a derecha aumenta la temperatura (Fusión, Vaporización), de derecha a izquierda disminuye (Condensación, Solidificación).");
+            }
+        }
+    </script>
+</body>
+</html>
